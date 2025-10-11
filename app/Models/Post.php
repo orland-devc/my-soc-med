@@ -47,7 +47,7 @@ class Post extends Model
     public function recentComment()
     {
         $userId = Auth::id();
+
         return $this->comments()->where('user_id', $userId)->latest()->first();
     }
-
 }

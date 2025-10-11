@@ -39,6 +39,7 @@ class PostController extends Controller
             'caption' => $request->caption,
             'description' => $request->description,
         ]);
+
         return redirect()->back()->with('message', 'Posted successfully!');
     }
 
@@ -49,6 +50,7 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
         $likes = Like::where('post_id', $id)->get();
+
         return view('posts.show', compact('post', 'likes'));
     }
 
@@ -75,10 +77,6 @@ class PostController extends Controller
     {
         //
     }
-
-
-
-
 
     public function toggle(Post $post)
     {

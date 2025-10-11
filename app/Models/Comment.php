@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
 class Comment extends Model
 {
@@ -51,7 +50,7 @@ class Comment extends Model
 
     public function addLike(User $user): void
     {
-        if (!$this->isLikedBy($user)) {
+        if (! $this->isLikedBy($user)) {
             $this->likes()->create(['user_id' => $user->id]);
         }
     }
@@ -73,6 +72,6 @@ class Comment extends Model
 
     public function isReply(): bool
     {
-        return !is_null($this->parent_id);
+        return ! is_null($this->parent_id);
     }
 }
