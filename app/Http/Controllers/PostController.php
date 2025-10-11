@@ -1,0 +1,102 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Like;
+use App\Models\Post;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class PostController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $posts = Post::all()
+            ->sortByDesc('created_at');
+        $likes = Like::all();
+
+        return view('posts.index', compact('posts', 'likes'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $post = Post::create([
+            'uploader' => Auth::user()->id,
+            'caption' => $request->caption,
+            'description' => $request->description,
+        ]);
+        return redirect()->back()->with('message', 'Posted successfully!');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        $post = Post::findOrFail($id);
+        $likes = Like::where('post_id', $id)->get();
+        return view('posts.show', compact('post', 'likes'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Post $post)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Post $post)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Post $post)
+    {
+        //
+    }
+
+
+
+
+
+    public function toggle(Post $post)
+    {
+        $user = Auth::user();
+
+        if ($post->likes()->where('user_id', $user->id)->exists()) {
+            $post->likes()->where('user_id', $user->id)->delete();
+            $liked = false;
+        } else {
+            $post->likes()->create(['user_id' => $user->id]);
+            $liked = true;
+        }
+
+        $count = $post->likes()->count();
+
+        return response()->json([
+            'liked' => $liked,
+            'count' => $count,
+        ]);
+    }
+}

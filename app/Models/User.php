@@ -57,4 +57,49 @@ class User extends Authenticatable
             ->map(fn (string $name) => Str::of($name)->substr(0, 1))
             ->implode('');
     }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'uploader');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function recentComment()
+    {
+        return $this->comments()->latest()->first();
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    public function hasLiked(Post $post): bool
+    {
+        return $this->likes()->where('post_id', $post->id)->exists();
+    }
+
+    public function reposts()
+    {
+        return $this->hasMany(Repost::class);
+    }
+
+    public function hasReposted(Post $post): bool
+    {
+        return $this->reposts()->where('post_id', $post->id)->exists();
+    }
+
+    public function commentLikes()
+    {
+        return $this->hasMany(CommentLike::class);
+    }
+
+    public function hasLikedComment(Comment $comment): bool
+    {
+        return $this->commentLikes()->where('comment_id', $comment->id)->exists();
+    }
 }

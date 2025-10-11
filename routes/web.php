@@ -1,15 +1,26 @@
 <?php
 
+use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('login');
 })->name('home');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::get('/posts', [PostController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('posts');
+
+Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+
+Route::get('/post/{id}', [PostController::class, 'show'])->name('posts.show');
+
+Route::post('/posts/{post}/like', [PostController::class, 'toggle'])->name('posts.like');
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
