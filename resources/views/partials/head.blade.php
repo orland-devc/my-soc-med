@@ -13,6 +13,14 @@
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
+{{-- I want font to be poppins --}}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    * {
+        font-family: Poppins;
+    }
+</style>
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 @fluxAppearance

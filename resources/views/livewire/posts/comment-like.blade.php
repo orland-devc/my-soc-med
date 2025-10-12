@@ -19,7 +19,7 @@ new class extends Component {
 };
 ?>
 
-<div wire:poll.3s>
+<div wire:poll.1s>
     <button wire:click="like" class="cursor-pointer flex items-center gap-1 hover:scale-110 transition-all">
         @if ($comment->likes->where('user_id', Auth::id())->count())
             <p class="text-md mr-1 font-bold" style="color: #ff6961">Like</p>

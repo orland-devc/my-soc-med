@@ -44,7 +44,7 @@ new class extends Component {
             'content' => $this->editedContent,
         ]);
         $this->dispatch('post-updated');
-        $this->redirect("/post/{$this->post->id}", navigate: true);
+        $this->redirect("/posts/{$this->post->id}", navigate: true);
     }
 
     public function reportPost(): void
@@ -76,7 +76,7 @@ new class extends Component {
 ?>
 
 <div 
-    x-data="{ open: false, showDeleteModal: false, showEditModal: false }" 
+    x-data="{ open: false, showDeleteModal: false, showEditModal: false, copyToast: false }" 
     class="relative"
 >
     {{-- Three Dots --}}
@@ -131,12 +131,38 @@ new class extends Component {
         @endif
 
         <button 
-            @click="navigator.clipboard.writeText('{{ url('/post/'.$post->id) }}'); open = false;"
+            @click="
+                const textToCopy = window.location.href; 
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(textToCopy);
+                } else {
+                    // fallback for non-HTTPS
+                    const textarea = document.createElement('textarea');
+                    textarea.value = textToCopy;
+                    textarea.style.position = 'fixed';
+                    textarea.style.left = '-9999px';
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                }
+                open = false;
+                copyToast = true;
+                setTimeout(() => { copyToast = false }, 2000);
+            "
             class="w-full text-left px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700"
         >
             <i class="fa-solid fa-link"></i>
             Copy link
         </button>
+    </div>
+
+    {{-- Toast Notification --}}
+    <div x-show="copyToast" x-transition class="fixed top-4 left-0 right-0 flex justify-center">
+        <span class="px-2 py-1 bg-green-500 rounded-lg text-white font-bold">
+            Link Copied!
+        </span>
     </div>
 
     {{-- DELETE MODAL --}}

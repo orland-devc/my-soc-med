@@ -27,7 +27,7 @@ new class extends Component {
 };
 ?>
 
-<div class="mt-3 flex items-center gap-2 dark:bg-zinc-700 bg-zinc-100 p-1 rounded-2xl">
+<div class="mt-3 flex items-center gap-2 dark:bg-zinc-800 bg-zinc-50 p-1 rounded-2xl">
     <input 
         wire:model.defer="commentText" 
         type="text" 
@@ -35,7 +35,7 @@ new class extends Component {
         class="w-full focus:outline-0 rounded-md px-2 transition-all"
         wire:keydown.enter="addComment"
     >
-    <button wire:click="addComment" class="text-lg justify-center flex items-center p-2 text-zinc-800 bg-zinc-200  hover:bg-zinc-300 dark:text-white dark:bg-zinc-800  dark:hover:bg-zinc-600 cursor-pointer rounded-xl transition-all">
+    <flux:button variant="filled" wire:click="addComment">
         <i class="fa-solid fa-paper-plane"></i>
-    </button>
+    </flux:button>
 </div>

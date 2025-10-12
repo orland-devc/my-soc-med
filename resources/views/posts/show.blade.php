@@ -1,5 +1,5 @@
 <x-layouts.app :title="__('' . $post->caption . ' - ' . $post->user->name)">
-    <div class="relative mb-6 w-full">
+    <div class="relative mb-6 w-full hidden md:block">
         <div class="flex justify-between">
             <div class="">
                 <flux:heading size="xl" level="1">{{ __('Public Posts') }}</flux:heading>
@@ -22,25 +22,23 @@
     </div>
         
     <div class="relative">
-            <div class="flex sm:w-full md:w-2/3 lg:w-160 flex-1 flex-col m-auto gap-4 rounded-xl border p-4">
+            <div class="flex sm:w-full md:w-2/3 lg:w-160 flex-1 flex-col m-auto gap-4 rounded-xl md:border md:p-4">
             <div>
                 <div class="flex justify-between items-center">
-                    <div class="">
-                        <a href="/user/{{ $post->user->id }}" class="font-semibold hover:underline ">
-                            <img src="{{ asset('images/user-profile.jpg') }}" alt="user-profile" class="w-8 h-8 rounded-full inline me-2">
-                            {{ $post->user->name }}
-                        </a>
-                        <small 
-                            class="ml-2 text-zinc-500 dark:text-zinc-400"
-                            title="{{ $post->created_at->format('M j, Y g:i A') }}"
-                        >
-                            @if ($post->created_at->diffInHours(now()) < 672)
-                                {{ $post->created_at->diffForHumans() }}
-                            @else
-                                {{ $post->created_at->format('M j, Y g:i A') }}
-                            @endif
-                        </small>
-
+                    <div class="flex items-center">
+                        <img src="{{ asset('images/user-profile.jpg') }}" alt="user-profile" class="w-9 h-9 rounded-full inline me-2">
+                        <div class="">
+                            <a href="/user/{{ $post->user->id }}" class="flex font-semibold hover:underline mb-[-5px] truncate max-w-[10rem] sm:max-w-[12rem] md:max-w-[14rem] lg:max-w-full">
+                                {{ $post->user->name }}
+                            </a>
+                            <p class="text-sm text-zinc-500 dark:text-zinc-400"title="{{ $post->created_at->format('M j, Y g:i A') }}">
+                                @if ($post->created_at->diffInHours(now()) < 672)
+                                    {{ $post->created_at->diffForHumans() }}
+                                @else
+                                    {{ $post->created_at->format('M j, Y g:i A') }}
+                                @endif
+                            </p>
+                        </div>
                     </div>
 
                 <livewire:posts.post-options :post="$post" />

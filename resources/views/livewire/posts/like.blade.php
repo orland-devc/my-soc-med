@@ -19,7 +19,7 @@ new class extends Component {
 };
 ?>
 
-<div wire:poll.3s class="flex gap-4 mt-3 text-sm text-zinc-700 dark:text-zinc-300">
+<div wire:poll.1s class="flex gap-4 mt-3 text-zinc-700 dark:text-zinc-300">
     {{-- LIKE BUTTON --}}
     <button wire:click="like" class="cursor-pointer flex items-center gap-1 hover:scale-110 transition-all">
         @if ($post->likes->where('user_id', Auth::id())->count())
@@ -32,18 +32,19 @@ new class extends Component {
 
     {{-- COMMENT BUTTON --}}
     @php
-        $onPostPage = request()->is('post/' . $post->id);
+        $onPostPage = request()->is('posts/' . $post->id);
     @endphp
 
     @if ($onPostPage)
         <button class="cursor-pointer flex items-center gap-1 hover:scale-110 transition-all">
             <i class="far fa-comment text-lg"></i>
-            {{ $post->comments->count() }}
+            {{ $post->comments->count() + $post->comments->sum(fn($comment) => $comment->replies->count()) }}
         </button>
+
     @else
-        <a href="{{ url('/post/' . $post->id) }}" class="cursor-pointer flex items-center gap-1 hover:scale-110 transition-all">
+        <a href="{{ url('/posts/' . $post->id) }}" class="cursor-pointer flex items-center gap-1 hover:scale-110 transition-all">
             <i class="far fa-comment text-lg"></i>
-            {{ $post->comments->count() }}
+            {{ $post->comments->count() + $post->comments->sum(fn($comment) => $comment->replies->count()) }}
         </a>
     @endif
 

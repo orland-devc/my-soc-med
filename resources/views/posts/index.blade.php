@@ -30,22 +30,20 @@
                         <div class="p-4">
                             <div>
                                 <div class="flex justify-between items-center">
-                                    <div>
-                                        <a href="/user/{{ $post->user->id }}" class="font-semibold hover:underline ">
-                                            <img src="{{ asset('images/user-profile.jpg') }}" alt="user-profile" class="w-8 h-8 rounded-full inline me-2">
-                                            {{ $post->user->name }}
-                                        </a>
-                                        <small 
-                                            class="text-xs ml-2"
-                                            title="{{ $post->created_at->format('M j, Y g:i A') }}"
-                                        >
-                                            @if ($post->created_at->diffInHours(now()) < 672)
-                                                {{ $post->created_at->diffForHumans() }}
-                                            @else
-                                                {{ $post->created_at->format('M j, Y g:i A') }}
-                                            @endif
-                                        </small>
-
+                                    <div class="flex items-center">
+                                        <img src="{{ asset('images/user-profile.jpg') }}" alt="user-profile" class="w-9 h-9 rounded-full inline me-2">
+                                        <div>
+                                            <a href="/user/{{ $post->user->id }}" class="flex font-semibold hover:underline mb-[-5px]">
+                                                {{ $post->user->name }}
+                                            </a>
+                                            <p class="text-sm text-zinc-500 dark:text-zinc-400"title="{{ $post->created_at->format('M j, Y g:i A') }}">
+                                                @if ($post->created_at->diffInHours(now()) < 672)
+                                                    {{ $post->created_at->diffForHumans() }}
+                                                @else
+                                                    {{ $post->created_at->format('M j, Y g:i A') }}
+                                                @endif
+                                            </p>
+                                        </div>
                                     </div>
 
                                     <livewire:posts.post-options :post="$post" />

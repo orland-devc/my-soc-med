@@ -16,11 +16,17 @@ Route::get('/posts', [PostController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('posts');
 
-Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+Route::post('/posts', [PostController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('posts.store');
 
-Route::get('/post/{id}', [PostController::class, 'show'])->name('posts.show');
+Route::get('/posts/{id}', [PostController::class, 'show'])
+    ->middleware(['auth', 'verified'])
+    ->name('posts.show');
 
-Route::post('/posts/{post}/like', [PostController::class, 'toggle'])->name('posts.like');
+Route::post('/posts/{post}/like', [PostController::class, 'toggle'])
+    ->middleware(['auth', 'verified'])
+    ->name('posts.like');
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');

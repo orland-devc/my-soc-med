@@ -29,10 +29,15 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'post_id' => 'required|exists:posts,id',
+            'content' => 'required|string|max:1000',
+        ]);
+
         $comment = new Comment;
-        $comment->post_id = $request->input('post_id');
+        $comment->post_id = $request('post_id');
         $comment->user_id = Auth::user()->id;
-        $comment->content = $request->input('content');
+        $comment->content = $request('content');
         $comment->save();
     }
 
