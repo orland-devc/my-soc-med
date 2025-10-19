@@ -54,20 +54,20 @@ class DatabaseSeeder extends Seeder
 
         $this->command->info("Account {$user2->email} created successfully.");
 
-        $post = Post::create([
-            'uploader' => 2,
-            'caption' => 'My love🤍',
-        ]);
+        // $post = Post::create([
+        //     'uploader' => 2,
+        //     'caption' => 'My love🤍',
+        // ]);
 
-        $this->command->info("Post by {$user1->name} added.");
+        // $this->command->info("Post by {$user1->name} added.");
 
-        $attachment = Attachment::create([
-            'user_id' => 2,
-            'post_id' => 1,
-            'file_name' => 'IMG2024020208474613.jpg',
-            'file_location' => 'images/posts/IMG2024020208474613.jpg',
-            'file_size' => '77824',
-        ]);
+        // $attachment = Attachment::create([
+        //     'user_id' => 2,
+        //     'post_id' => 1,
+        //     'file_name' => 'IMG2024020208474613.jpg',
+        //     'file_location' => 'images/posts/IMG2024020208474613.jpg',
+        //     'file_size' => '77824',
+        // ]);
 
         $this->command->info("Attachment added for {$user1->name}'s post.");
 

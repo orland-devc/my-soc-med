@@ -45,6 +45,6 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 });
 
-Route::fallback(fn () => response()->view('not-found', [], 404));
+Route::fallback(fn() => response()->view('not-found', [], 404));
 
 require __DIR__.'/auth.php';
