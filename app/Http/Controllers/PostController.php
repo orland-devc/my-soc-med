@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attachment;
 use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -9,13 +10,21 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
+    public function new()
+    {
+        return view('posts.create');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $posts = Post::all()
-            ->sortByDesc('created_at');
+        $posts = Post::where('archived', false)
+            ->whereIn('privacy', [0, 1])
+            ->orderByDesc('created_at')
+            ->get();
+
         $likes = Like::all();
 
         return view('posts.index', compact('posts', 'likes'));
@@ -26,7 +35,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -34,13 +43,38 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $post = Post::create([
-            'uploader' => Auth::user()->id,
-            'caption' => $request->caption,
-            'description' => $request->description,
+        $file_dir = 'images/posts/';
+
+        $request->validate([
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'image|mimes:png,jpg,jpeg|max:10240',
         ]);
 
-        return redirect()->back()->with('message', 'Posted successfully!');
+        $post = new Post;
+        $post->uploader = Auth::user()->id;
+        $post->caption = $request->caption;
+        $post->description = $request->description;
+        $post->save();
+
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $file_name = $file->getClientOriginalName();
+                $file_size = $file->getSize();
+                $file_path = $file_dir.$file_name;
+
+                $file->move($file_dir, $file_name);
+
+                Attachment::create([
+                    'user_id' => Auth::id(),
+                    'post_id' => $post->id,
+                    'file_name' => $file_name,
+                    'file_location' => $file_path,
+                    'file_size' => $file_size,
+                ]);
+            }
+        }
+
+        return redirect()->route('posts');
     }
 
     /**
@@ -49,6 +83,23 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::findOrFail($id);
+
+        // Separate creator's and others' comments
+        $creatorComments = $post->comments()
+            ->where('user_id', $post->uploader)
+            ->with(['user', 'likes', 'replies.user', 'replies.likes'])
+            ->orderBy('created_at', 'asc') // oldest first
+            ->get();
+
+        $otherComments = $post->comments()
+            ->where('user_id', '!=', $post->uploader)
+            ->with(['user', 'likes', 'replies.user', 'replies.likes'])
+            ->orderBy('created_at', 'desc') // newest first
+            ->get();
+
+        // Merge the two collections (creator first)
+        $post->setRelation('comments', $creatorComments->concat($otherComments));
+
         $likes = Like::where('post_id', $id)->get();
 
         return view('posts.show', compact('post', 'likes'));
@@ -96,5 +147,10 @@ class PostController extends Controller
             'liked' => $liked,
             'count' => $count,
         ]);
+    }
+
+    public function search()
+    {
+        return view('messages.index');
     }
 }

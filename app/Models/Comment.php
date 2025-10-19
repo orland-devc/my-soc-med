@@ -38,6 +38,11 @@ class Comment extends Model
         return $this->hasMany(CommentLike::class);
     }
 
+    public function likedByCreator()
+    {
+        return $this->likes()->where('user_id', $this->post->uploader)->exists() && $this->user_id != $this->post->uploader;
+    }
+
     public function isLikedBy(User $user): bool
     {
         return $this->likes()->where('user_id', $user->id)->exists();

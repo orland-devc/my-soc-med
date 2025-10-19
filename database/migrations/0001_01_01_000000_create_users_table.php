@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('profile_photo_path')->nullable()->default('images\user-profile.jpg');
+            $table->string('cover_path')->nullable();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('popular')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

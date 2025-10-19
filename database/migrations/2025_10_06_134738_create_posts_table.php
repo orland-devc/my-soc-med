@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('uploader')->constrained()->onDelete('cascade');
-            $table->string('caption');
-            $table->string('description');
+            $table->string('caption')->nullable();
+            $table->string('description')->nullable();
+            $table->integer('privacy')->default(0);
+            $table->boolean('archived')->default(false);
+            $table->boolean('allow_comment')->default(true);
+            $table->boolean('is_pinned')->default(false);
             $table->timestamps();
         });
     }

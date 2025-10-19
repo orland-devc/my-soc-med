@@ -2,21 +2,33 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 
 class Post extends Model
 {
-    //
+    use HasFactory, Notifiable;
+
     protected $fillable = [
         'uploader',
         'caption',
         'description',
+        'privacy',
+        'archived',
+        'comments',
+        'is_pinned',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'uploader');
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(Attachment::class);
     }
 
     public function comments()
@@ -49,5 +61,10 @@ class Post extends Model
         $userId = Auth::id();
 
         return $this->comments()->where('user_id', $userId)->latest()->first();
+    }
+
+    public function archived()
+    {
+        return $this->where('archived', true);
     }
 }

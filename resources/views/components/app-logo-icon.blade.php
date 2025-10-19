@@ -1,1 +1,1 @@
-<img src="{{ asset('images/PSU logo.png') }}" alt="">
+<img src="{{ asset('images/flexy/flexy-logo.png') }}" alt="">

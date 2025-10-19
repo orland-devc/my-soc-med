@@ -61,7 +61,7 @@ $classes = Flux::classes()
         <div class="relative">
             <?php if (is_string($icon) && $icon !== ''): ?>
                 @if (is_string($icon) && $icon !== '')
-                    <i class="fa-solid fa-{{ $icon }} {!! $iconClasses !!}"></i>
+                    <x-dynamic-component :component="'lucide-' . $icon" class="{{ $iconClasses }}" />
                 @endif
             <?php else: ?>
                 {{ $icon }}
@@ -80,7 +80,7 @@ $classes = Flux::classes()
     <?php endif; ?>
 
     <?php if (is_string($iconTrailing) && $iconTrailing !== ''): ?>
-        <i class="fa-solid fa-{{ $iconTrailing }} size-4!"></i>
+        <x-dynamic-component :component="'lucide-' . $iconTrailing" class="w-5 h-5" />
     <?php elseif ($iconTrailing): ?>
         {{ $iconTrailing }}
     <?php endif; ?>

@@ -88,6 +88,11 @@ class User extends Authenticatable
         return $this->hasMany(Repost::class);
     }
 
+    public function savedPosts()
+    {
+        return $this->hasMany(SavedPost::class);
+    }
+
     public function hasReposted(Post $post): bool
     {
         return $this->reposts()->where('post_id', $post->id)->exists();
@@ -101,5 +106,27 @@ class User extends Authenticatable
     public function hasLikedComment(Comment $comment): bool
     {
         return $this->commentLikes()->where('comment_id', $comment->id)->exists();
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id')
+            ->withTimestamps();
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id')
+            ->withTimestamps();
+    }
+
+    public function isFollowing(User $user): bool
+    {
+        return $this->following()->where('following_id', $user->id)->exists();
+    }
+
+    public function isFollowedBy(User $user): bool
+    {
+        return $this->followers()->where('follower_id', $user->id)->exists();
     }
 }

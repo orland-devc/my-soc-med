@@ -14,17 +14,34 @@
         </a>
 
         <flux:navlist variant="outline">
-            <flux:navlist.group :heading="__('Platform')" class="grid">
+            {{-- <flux:navlist.group :heading="__('Platform')" class="grid">
                 <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                     {{ __('Dashboard') }}
                 </flux:navlist.item>
 
-            </flux:navlist.group>
+            </flux:navlist.group> --}}
 
             <flux:navlist.group :heading="__('Platform')" class="grid">
 
-                <flux:navlist.item icon="bullhorn" :href="route('posts')" :current="request()->routeIs('posts*')" wire:navigate>
+                <flux:navlist.item icon="house" :href="route('posts')" :current="request()->routeIs('posts*')" wire:navigate>
                     {{ __('Posts') }}
+                </flux:navlist.item>
+
+                <flux:navlist.item icon="message-circle" :href="route('inbox')" :current="request()->routeIs('inbox*')" wire:navigate>
+                    {{ __('Inbox') }}
+                </flux:navlist.item>
+
+                <flux:navlist.item icon="square-plus" :href="route('new')" :current="request()->routeIs('new*')" wire:navigate>
+                    {{ __('New Post') }}
+                </flux:navlist.item>
+
+                <flux:navlist.item icon="bell" :href="route('notifications')" :current="request()->routeIs('notifications*')" wire:navigate>
+                    {{ __('Notifications') }}
+                </flux:navlist.item>
+
+                <flux:navlist.item icon="user-circle" :href="route('user.show', Auth::user()->id)"
+                    :current="request()->routeIs('user.show') && request()->route('id') == Auth::user()->id" wire:navigate>
+                    {{ __('Profile') }}
                 </flux:navlist.item>
 
 
@@ -35,7 +52,7 @@
         <flux:spacer />
 
         <flux:navlist variant="outline">
-            <flux:navlist.item icon="code-branch" href="https://github.com/laravel/livewire-starter-kit"
+            <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit"
                 target="_blank">
                 {{ __('Repository') }}
             </flux:navlist.item>
@@ -90,7 +107,61 @@
     </flux:sidebar>
 
     <!-- Mobile User Menu -->
-    <flux:header class="lg:hidden">
+    <flux:mobile-header stashable sticky class="hide-header border-b lg:hidden border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+
+        {{-- <a href="{{ route('dashboard') }}" class="hover:bg-zinc-100 dark:hover:bg-zinc-800 ms-1 px-3 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+            <div class="flex aspect-square size-8 items-center justify-center">
+                <x-app-logo-icon class="size-5" />
+            </div>
+        </a> --}}
+
+        <flux:mobile-navbar class="-mb-px text-2xl">
+            <flux:mobile-navbar.item icon="house" :href="route('posts')" :current="request()->routeIs('posts*')" wire:navigate>
+            </flux:mobile-navbar.item>
+        </flux:mobile-navbar>
+
+        {{-- <flux:mobile-navbar class="-mb-px text-2xl">
+            <flux:mobile-navbar.item icon="search" :href="route('search')" :current="request()->routeIs('search*')" wire:navigate>
+            </flux:mobile-navbar.item>
+        </flux:mobile-navbar> --}}
+
+        <flux:mobile-navbar class="-mb-px text-2xl">
+            <flux:mobile-navbar.item icon="message-circle" :href="route('inbox')" :current="request()->routeIs('inbox*')" wire:navigate>
+            </flux:mobile-navbar.item>
+        </flux:mobile-navbar>
+
+        <flux:mobile-navbar class="-mb-px text-2xl">
+            <flux:mobile-navbar.item icon="circle-plus" :href="route('new')" :current="request()->routeIs('new')" wire:navigate>
+            </flux:mobile-navbar.item>
+        </flux:mobile-navbar>
+
+        <flux:mobile-navbar class="-mb-px text-2xl">
+            <flux:mobile-navbar.item icon="bell" :href="route('notifications')" :current="request()->routeIs('notifications')" wire:navigate>
+            </flux:mobile-navbar.item>
+        </flux:mobile-navbar>
+
+        <flux:mobile-navbar class="-mb-px text-2xl">
+            <flux:mobile-navbar.item
+                icon="user-circle"
+                :href="route('user.show', Auth::user()->id)"
+                :current="request()->routeIs('user.show') && request()->route('id') == Auth::user()->id"
+                wire:navigate
+            />
+        </flux:mobile-navbar>
+
+
+        {{-- <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" /> --}}
+
+
+        {{-- <flux:spacer /> --}}
+
+        {{-- <flux:tooltip :content="__('Search')" position="bottom">
+            <flux:navbar.item class="!h-10 [&>div>svg]:size-5 active:bg-zinc-200 dark:active:bg-zinc-700 transition-all" icon="magnifying-glass" href="#"/>
+        </flux:tooltip> --}}
+    </flux:mobile-header>
+
+
+    {{-- <flux:header class="lg:hidden">
         <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
         <flux:spacer />
@@ -134,7 +205,7 @@
                 </form>
             </flux:menu>
         </flux:dropdown>
-    </flux:header>
+    </flux:header> --}}
 
     {{ $slot }}
 

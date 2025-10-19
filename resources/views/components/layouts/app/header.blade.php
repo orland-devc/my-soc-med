@@ -12,8 +12,13 @@
             </a>
 
             <flux:navbar class="-mb-px max-lg:hidden">
-                <flux:navbar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                <flux:navbar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                     {{ __('Dashboard') }}
+                </flux:navbar.item>
+            </flux:navbar>
+
+            <flux:navbar class="-mb-px max-lg:hidden">
+                <flux:navbar.item icon="bullhorn" :href="route('posts')" :current="request()->routeIs('posts')" wire:navigate>
                 </flux:navbar.item>
             </flux:navbar>
 

@@ -20,4 +20,9 @@ class ReplyCommentLike extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function likedByCreator()
+    {
+        return $this->likes()->where('user_id', $this->post->uploader)->exists();
+    }
 }

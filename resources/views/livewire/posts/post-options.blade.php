@@ -8,7 +8,10 @@ use Livewire\Volt\Component;
 new class extends Component {
     public Post $post;
     public bool $isSaved = false;
-    public string $editedContent = '';
+
+    public $editedCaption = '';
+    public $editedContent = '';
+    public $editedPrivacy;
 
     public function mount()
     {
@@ -18,7 +21,9 @@ new class extends Component {
                 ->exists();
         }
 
-        $this->editedContent = $this->post->content ?? '';
+        $this->editedCaption = $this->post->caption ?? '';
+        $this->editedContent = $this->post->description ?? '';
+        $this->editedPrivacy = $this->post->privacy ?? 0;
     }
 
     public function deletePost(): void
@@ -35,14 +40,15 @@ new class extends Component {
         if ($this->post->uploader != Auth::user()->id) return;
 
         $this->validate([
-            'editedCaption' => 'sometimes|string|max:2000',
-            'editedContent' => 'sometimes|string|max:2000',
+            'editedCaption' => 'nullable|string|max:2000',
+            'editedContent' => 'nullable|string|max:2000',
         ]);
 
         $this->post->update([
             'caption' => $this->editedCaption,
-            'content' => $this->editedContent,
+            'description' => $this->editedContent,
         ]);
+
         $this->dispatch('post-updated');
         $this->redirect("/posts/{$this->post->id}", navigate: true);
     }
@@ -72,17 +78,68 @@ new class extends Component {
             $this->isSaved = true;
         }
     }
+
+    public function archivePost(): void
+    {
+        $user = Auth::user();
+        if (! $user) return;
+
+        $this->post->update([
+            'archived' => 1,
+        ]);
+    }
+
+    public function updatePrivacy(): void
+    {
+        if ($this->post->uploader != Auth::user()->id) return;
+
+        $this->validate([
+            'editedPrivacy' => 'nullable|integer|in:0,1,2',
+        ]);
+
+        $this->post->update([
+            'privacy' => $this->editedPrivacy,
+        ]);
+
+        $this->dispatch('post-updated');
+        $this->redirect("/posts/{$this->post->id}", navigate: true);
+    }
+
+    public function pinPost(): void
+    {
+        $auth = Auth::user();
+        if ($this->post->uploader != $auth->id) return;
+
+        // Unpin all posts of user
+        $auth->posts()->update([
+            'is_pinned' => false,
+        ]);
+
+        // Pin this one
+        $this->post->update([
+            'is_pinned' => true,
+        ]);
+    }
 };
 ?>
 
 <div 
-    x-data="{ open: false, showDeleteModal: false, showEditModal: false, copyToast: false }" 
+    x-data="{ open: false, showDeleteModal: false, showEditModal: false, copyToast: false, editPrivacyModal: false }" 
     class="relative"
 >
+    {{-- Backdrop (blocks clicks but allows closing dropdown) --}}
+    <div 
+        x-show="open"
+        @click="open = false"
+        x-transition.opacity
+        class="fixed inset-0 z-40 bg-transparent cursor-default"
+    ></div>
+
     {{-- Three Dots --}}
     <button 
         @click="open = !open"
-        class="cursor-pointer flex items-center p-2 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-full transition-all"
+        id="dotOptions"
+        class="cursor-pointer flex items-center p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 active:bg-zinc-200 dark:active:bg-zinc-800 rounded-full transition-all z-30 relative"
     >
         <i class="fa-solid fa-ellipsis text-xl"></i>
     </button>
@@ -90,43 +147,98 @@ new class extends Component {
     {{-- Dropdown --}}
     <div 
         x-show="open"
-        @click.away="open = false"
         x-transition
-        class="absolute right-0 mt-2 w-44 bg-white dark:bg-zinc-800 rounded-xl shadow-lg overflow-hidden z-50"
+        class="absolute right-0 mt-2 border w-56 text-sm bg-white dark:bg-zinc-800 rounded-xl shadow-2xl overflow-hidden z-100"
     >
         @if (Auth::user()->id == $post->uploader)
             <button 
-                @click="showDeleteModal = true; open = false"
-                class="w-full text-left px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-red-500"
+                @click="open = false"
+                class="w-full flex justify-between items-center px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-600"
             >
-                <i class="fa-solid fa-trash"></i>
-                Delete
+                Pin post
+                <i class="fa-solid fa-thumbtack text-lg ml-2"></i>
+            </button>
+
+            <button 
+                wire:click="archivePost"
+                @click="open = false"
+                class="w-full flex justify-between items-center px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-600"
+            >
+                Move to archive
+                <i class="fa-solid fa-box-archive text-lg ml-2"></i>
+            </button>
+
+            <button 
+                @click="open = false"
+                class="w-full flex justify-between items-center px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-600"
+            >
+                Disable Comments
+                <i class="fa-solid fa-comment-slash text-lg ml-2"></i>
             </button>
 
             <button 
                 @click="showEditModal = true; open = false"
-                class="w-full text-left px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                class="w-full flex justify-between items-center px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-600"
             >
-                <i class="fa-solid fa-pen-to-square"></i>
-                Edit
+                Edit post
+                <i class="fa-solid fa-pen text-lg ml-2"></i>
             </button>
+
+            <button 
+                @click="
+                    open = false;
+                    editPrivacyModal = true;
+                "
+                class="w-full flex justify-between items-center px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-600"
+            >
+                Edit privacy
+                <i class="fa-solid fa-lock text-lg ml-2"></i>
+            </button>
+
+            <button 
+                @click="showDeleteModal = true; open = false"
+                class="w-full flex justify-between items-center px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-600 text-red-500"
+            >
+                Delete
+                <i class="fa-solid fa-trash text-lg ml-2"></i>
+            </button>
+
         @else
             <button 
                 wire:click="reportPost"
-                class="w-full text-left px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                class="w-full flex justify-between items-center px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-600"
             >
-                <i class="fa-solid fa-flag"></i>
                 Report
+                <i class="fa-solid fa-flag text-lg ml-2"></i>
             </button>
+
             <button 
                 wire:click="savePost"
-                class="w-full text-left px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                class="w-full flex justify-between items-center px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-600"
             >
                 @if ($isSaved)
-                    <i class="fa-solid fa-bookmark text-red-400"></i> Unsave
+                    Unsave
+                    <i class="fa-solid fa-bookmark text-red-400 text-lg ml-2"></i>
                 @else
-                    <i class="fa-solid fa-bookmark"></i> Save
+                    Save
+                    <i class="fa-solid fa-bookmark text-lg ml-2"></i>
                 @endif
+            </button>
+
+            <button 
+                wire:click="reportPost"
+                class="w-full flex justify-between items-center px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-600"
+            >
+                <p class="truncate">Unfollow {{ $post->user->name }}</p>
+                <i class="fa-solid fa-user-xmark text-lg ml-2"></i>
+            </button>
+
+            <button 
+                wire:click="reportPost"
+                class="w-full flex justify-between items-center px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-600"
+            >
+                <p class="truncate">Block {{ $post->user->name }}</p>
+                <i class="fa-solid fa-user-slash text-lg ml-2"></i>
             </button>
         @endif
 
@@ -147,21 +259,23 @@ new class extends Component {
                     document.execCommand('copy');
                     document.body.removeChild(textarea);
                 }
+                const dotOptions = document.getElementById('dotOptions');
+                dotOptions.classList.remove('bg-zinc-200', 'dark:bg-zinc-800');
                 open = false;
                 copyToast = true;
                 setTimeout(() => { copyToast = false }, 2000);
             "
-            class="w-full text-left px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+            class="w-full flex justify-between items-center px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-600"
         >
-            <i class="fa-solid fa-link"></i>
             Copy link
+            <i class="fa-solid fa-link text-lg ml-2"></i>
         </button>
     </div>
 
     {{-- Toast Notification --}}
-    <div x-show="copyToast" x-transition class="fixed top-4 left-0 right-0 flex justify-center">
+    <div x-show="copyToast" x-transition class="fixed top-4 left-0 right-0 flex justify-center z-99999">
         <span class="px-2 py-1 bg-green-500 rounded-lg text-white font-bold">
-            Link Copied!
+            Copied!
         </span>
     </div>
 
@@ -169,10 +283,39 @@ new class extends Component {
     <div 
         x-show="showDeleteModal"
         x-transition
-        class="fixed inset-0 bg-black flex justify-center items-center z-50"
+        class="fixed inset-0 bg-black/80 flex justify-center items-center z-50"
     >
-        <div class="bg-white dark:bg-zinc-800 rounded-xl p-6 w-80">
+        <div class="bg-white sm:w-full md:w-2/3 lg:w-160 dark:bg-zinc-800 rounded-xl p-6 w-96 flex flex-col gap-2">
             <h2 class="text-lg font-semibold mb-2">Delete Post?</h2>
+            <div>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center">
+                        <img src="{{ asset($post->user->profile_photo_path) }}" alt="user-profile" class="w-9 h-9 rounded-full inline me-2 object-cover">
+                        <div>
+                            <a href="/user/{{ $post->user->id }}" class="flex items-center gap-1 font-semibold hover:underline mb-[-5px]">
+                                {{ $post->user->name }}
+                                @if ($post->user->popular)
+                                    <img src="{{asset('images/image.png')}}" alt="" class="h-4">
+                                @endif
+                            </a>
+                            <p class="text-sm text-zinc-500 dark:text-zinc-400"title="{{ $post->created_at->format('M j, Y g:i A') }}">
+                                @if ($post->created_at->diffInHours(now()) < 672)
+                                    {{ $post->created_at->diffForHumans() }}
+                                @else
+                                    {{ $post->created_at->format('M j, Y g:i A') }}
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+                <p class="py-2 font-semibold text-xl">{{ $post->caption }}</p>
+                <p>{!! nl2br(e($post->description)) !!}</p>
+            </div>
+
+            @if ($post->attachments()->count() >= 1)
+                <livewire:attachments.post :post="$post" />
+            @endif
             <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
                 Are you sure you want to delete this post? This action cannot be undone.
             </p>
@@ -194,24 +337,85 @@ new class extends Component {
     <div 
         x-show="showEditModal"
         x-transition
-        class="modal-bg fixed inset-0 bg-black flex justify-center items-center z-50"
+        class="modal-bg fixed inset-0 bg-black/80 flex justify-center items-center z-50"
     >
         <div class="bg-white sm:w-full md:w-2/3 lg:w-160 dark:bg-zinc-800 rounded-xl p-6 w-96">
             <h2 class="text-lg font-semibold mb-3">Edit Post</h2>
             <input 
-                wire:modal.defer="editedCaption"
+                wire:model.defer="editedCaption"
                 type="text"
                 class="w-full rounded-lg p-2 mb-3 bg-zinc-100 dark:bg-zinc-700 focus:outline-none"
+                value="{{ $post->caption }}"
                 >
             <textarea 
                 wire:model.defer="editedContent"
                 class="w-full h-28 rounded-lg p-2 bg-zinc-100 dark:bg-zinc-700 focus:outline-none resize-none"
-            ></textarea>
+            >{!! nl2br(e($post->description)) !!}</textarea>
+            
             <div class="flex justify-end gap-3 mt-4">
                 <flux:button @click="showEditModal = false">
                     {{ __('Cancel') }}
                 </flux:button>
                 <flux:button variant="primary" wire:click="updatePost" @click="showEditModal = false">
+                    {{ __('Save') }}
+                </flux:button>
+            </div>
+        </div>
+    </div>
+
+    {{-- PRIVACY MODAL --}}
+    <div 
+        x-show="editPrivacyModal"
+        x-transition
+        @click.away="editPrivacyModal = false"
+        class="fixed inset-0 bg-black/80 flex justify-center items-center z-50"
+    >
+        <div class="bg-white sm:w-full md:w-2/3 lg:w-160 dark:bg-zinc-800 rounded-xl p-6 w-96 flex flex-col gap-2">
+            <div>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center">
+                        <img src="{{ asset($post->user->profile_photo_path) }}" alt="user-profile" class="w-9 h-9 rounded-full inline me-2 object-cover">
+                        <div>
+                            <a href="/user/{{ $post->user->id }}" class="flex items-center gap-1 font-semibold hover:underline mb-[-5px]">
+                                {{ $post->user->name }}
+                                @if ($post->user->popular)
+                                    <img src="{{asset('images/image.png')}}" alt="" class="h-4">
+                                @endif
+                            </a>
+                            <p class="text-sm text-zinc-500 dark:text-zinc-400"title="{{ $post->created_at->format('M j, Y g:i A') }}">
+                                @if ($post->created_at->diffInHours(now()) < 672)
+                                    {{ $post->created_at->diffForHumans() }}
+                                @else
+                                    {{ $post->created_at->format('M j, Y g:i A') }}
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+
+                <div>
+                    <x:select
+                        wire:model.defer="editedPrivacy"
+                    >
+                        <option value="0">Public</option>
+                        <option value="1">Followers</option>
+                        <option value="2">Only Me</option>
+                    </x:select>
+                </div>
+
+                </div>
+                <p class="py-2 font-semibold text-xl">{{ $post->caption }}</p>
+                <p>{!! nl2br(e($post->description)) !!}</p>
+            </div>
+
+            @if ($post->attachments()->count() >= 1)
+                <livewire:attachments.post :post="$post" />
+            @endif
+
+            <div class="flex justify-end gap-3 mt-4">
+                <flux:button @click="editPrivacyModal = false">
+                    {{ __('Cancel') }}
+                </flux:button>
+                <flux:button variant="primary" wire:click="updatePrivacy">
                     {{ __('Save') }}
                 </flux:button>
             </div>
