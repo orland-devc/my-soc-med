@@ -1,7 +1,9 @@
-@php $iconTrailing = $iconTrailing ??= $attributes->pluck('icon:trailing'); @endphp
-@php $iconVariant = $iconVariant ??= $attributes->pluck('icon:variant'); @endphp
+@php
+$iconTrailing = $iconTrailing ??= $attributes->pluck('icon:trailing');
+$iconVariant = $iconVariant ??= $attributes->pluck('icon:variant');
+@endphp
 
-@aware([ 'variant' ])
+@aware(['variant'])
 
 @props([
     'iconVariant' => 'outline',
@@ -10,20 +12,19 @@
     'variant' => null,
     'iconDot' => null,
     'accent' => true,
-    'square' => null,
+    'square' => true,
     'badge' => null,
     'icon' => null,
+    'image' => null,
 ])
 
 @php
-$square ??= $slot->isEmpty();
-$iconClasses = Flux::classes($square ? 'size-6' : 'size-5');
+$iconClasses = Flux::classes('size-6');
 
 $classes = Flux::classes()
-    ->add('px-3 flex items-center relative')
-    ->add($square ? '' : 'px-2.5!')
+    ->add('px-3 flex items-center justify-center relative')
     ->add('text-zinc-400 dark:text-zinc-600 transition-all')
-    ->add('data-current:after:absolutedata-current:after:inset-x-0 data-current:after:h-[2px]')
+    ->add('data-current:after:absolute data-current:after:bottom-0 data-current:after:inset-x-0 data-current:after:h-[2px] data-current:bg-black/10 dark:data-current:bg-zinc-800')
     ->add([
         '[--hover-fill:color-mix(in_oklab,_var(--color-accent-content),_transparent_90%)]',
     ])
@@ -42,8 +43,17 @@ $classes = Flux::classes()
 @endphp
 
 <flux:button-or-link :attributes="$attributes->class($classes)" data-flux-navbar-items>
-    {{-- Leading Icon --}}
-    @if ($icon)
+    {{-- Main Icon or Image --}}
+    @if ($image)
+        <div class="relative">
+            <img 
+                src="{{ asset($image) }}" 
+                alt="Profile" 
+                class="w-7 h-7 rounded-full border-2 border-zinc-300 dark:border-zinc-600 object-cover
+                       data-current:after:border-black dark:data-current:after:border-white"
+            />
+        </div>
+    @elseif ($icon)
         <div class="relative">
             @if (is_string($icon))
                 <x-dynamic-component :component="'lucide-' . $icon" class="{{ $iconClasses }}" />
@@ -59,16 +69,9 @@ $classes = Flux::classes()
         </div>
     @endif
 
-    {{-- Text Slot --}}
-    @if ($slot->isNotEmpty())
-        <div class="{{ $icon ? 'ms-3' : '' }} flex-1 text-xl font-medium leading-none whitespace-nowrap [[data-nav-footer]_&]:hidden [[data-nav-sidebar]_[data-nav-footer]_&]:block" data-content>
-            {{ $slot }}
-        </div>
-    @endif
-
     {{-- Trailing Icon --}}
     @if (is_string($iconTrailing))
-        <x-dynamic-component :component="'lucide-' . $iconTrailing" class="w-5 h-5" />
+        <x-dynamic-component :component="'lucide-' . $iconTrailing" class="w-5 h-5 ms-1" />
     @elseif ($iconTrailing)
         {{ $iconTrailing }}
     @endif

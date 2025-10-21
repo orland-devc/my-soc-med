@@ -28,12 +28,12 @@ new class extends Component {
 
     <div 
         x-show="profileModal"
-        @click.away="profileModal = false"
         x-transition
         x-on:close-profile-modal.window="profileModal = false"
         class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
 
         <div 
+            @click.away="profileModal = false"
             x-data="{
                 preview: null,
                 fileChosen(event) {

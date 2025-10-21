@@ -140,14 +140,15 @@
             </flux:mobile-navbar.item>
         </flux:mobile-navbar>
 
-        <flux:mobile-navbar class="-mb-px text-2xl">
-            <flux:mobile-navbar.item
-                icon="user-circle"
-                :href="route('user.show', Auth::user()->id)"
-                :current="request()->routeIs('user.show') && request()->route('id') == Auth::user()->id"
-                wire:navigate
-            />
-        </flux:mobile-navbar>
+<flux:mobile-navbar class="-mb-px text-2xl">
+    <flux:mobile-navbar.item
+        :image="Auth::user()->profile_photo_path"
+        :href="route('user.show', Auth::user()->id)"
+        :current="request()->routeIs('user.show') && request()->route('id') == Auth::user()->id"
+        wire:navigate
+    />
+</flux:mobile-navbar>
+
 
 
         {{-- <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" /> --}}
