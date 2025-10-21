@@ -1,90 +1,91 @@
 <x-layouts.app :title="__('' . $post->caption . ' - ' . $post->user->name)">
-    <div class="relative mb-6 w-full hidden md:block">
-        <div class="flex justify-between">
-            <div class="">
-                <flux:heading size="xl" level="1">{{ __('Public Posts') }}</flux:heading>
-                <flux:subheading size="lg" class="mb-6">{{ __('View and interact with public posts and announcements.') }}</flux:subheading>
-            </div>
-            <div class=" flex items-center">
-                <a href="#" onclick="openForm()" class="font-semibold dark:bg-white text-white dark:text-black dark:hover:bg-zinc-300 bg-zinc-700 hover:bg-zinc-600/75 transition-all px-2 py-3 rounded-lg">
-                    <div class="hidden md:flex items-center gap-2">
-                        <ion-icon name="add" class="text-xl"></ion-icon>
-                        <span class="mr-2">Create Post</span>
-                    </div>
-                    <div class="md:hidden flex items-center gap-2">
-                        <ion-icon name="add" class="text-xl "></ion-icon>
-                        <p class="mr-2">New</p>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <flux:separator variant="subtle" />
-    </div>
-        
     <div class="relative">
-        <div class="flex sm:w-full md:w-2/3 lg:w-160 flex-1 flex-col m-auto gap-2 rounded-xl md:border md:p-4">
-            <div class="md:hidden flex items-center justify-between">
+        <div class="flex sm:w-full md:w-2/3 lg:w-160 flex-1 flex-col m-auto gap-2">
+            <div class="lg:hidden flex items-center justify-between">
                 <a class="cursor-pointer flex items-center p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 active:bg-zinc-200 dark:active:bg-zinc-800 rounded-full transition-all" onclick="history.back()">
                     <i class="fa-solid fa-chevron-left text-xl"></i>
                 </a>
                 <flux:heading size="lg" level="2" class="text-center font-bold">
-                    {{ $post->user->name }}'s Post
+                    {{ $post->user->id == Auth::user()->id ?  'Your' : $post->user->name . "'s" }} Post
                 </flux:heading>
                 <livewire:posts.post-options :post="$post" />
             </div>
-            <div>
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center">
-                        <img src="{{ asset($post->user->profile_photo_path) }}" alt="user-profile" class="w-9 h-9 rounded-full inline me-2">
-                        <div class="">
-                            <a href="/user/{{ $post->user->id }}" class="flex font-semibold hover:underline mb-[-5px] truncate max-w-[10rem] sm:max-w-[12rem] md:max-w-[14rem] lg:max-w-full">
-                                {{ $post->user->name }}
+            <div class="bg-white dark:bg-zinc-900 rounded-xl shadow-sm md:border border-zinc-200 dark:border-zinc-800 overflow-hidden hover:shadow-md transition-shadow">
+                <!-- Post Header -->
+                <div class="md:px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-3 flex-1">
+                            <a href="/user/{{ $post->user->id }}" class="flex-shrink-0">
+                                <img 
+                                    src="{{ asset($post->user->profile_photo_path) }}" 
+                                    alt="{{ $post->user->name }}" 
+                                    class="w-11 h-11 rounded-full object-cover border-2 border-zinc-200 dark:border-zinc-700 hover:border-blue-400 transition-colors"
+                                >
                             </a>
-                            <p class="text-sm text-zinc-500 dark:text-zinc-400"title="{{ $post->created_at->format('M j, Y g:i A') }}">
-                                @if ($post->created_at->diffInHours(now()) < 672)
-                                    {{ $post->created_at->diffForHumans() }}
-                                @else
-                                    {{ $post->created_at->format('M j, Y g:i A') }}
-                                @endif
-
-                                @if ($post->privacy == 0)
-                                    <i class="fa-solid fa-earth-americas"></i>
-                                @elseif ($post->privacy == 1)
-                                    <i class="fa-solid fa-user-group"></i>
-                                @elseif ($post->privacy == 2)
-                                    <i class="fa-solid fa-lock"></i>
-                                @endif
-                            </p>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <a href="/user/{{ $post->user->id }}" class="font-semibold text-zinc-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                        {{ $post->user->name }}
+                                    </a>
+                                    @if ($post->user->popular)
+                                        <img src="{{asset('images/image.png')}}" alt="verified" class="h-4 w-4">
+                                    @endif
+                                    <span class="text-xs font-medium px-2 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 rounded-full">
+                                        @if ($post->privacy == 0)
+                                            <i class="fa-solid fa-earth-americas mr-1"></i>
+                                        @elseif ($post->privacy == 1)
+                                            <i class="fa-solid fa-user-group mr-1"></i>
+                                        @elseif ($post->privacy == 2)
+                                            <i class="fa-solid fa-lock mr-1"></i>
+                                        @endif
+                                    </span>
+                                </div>
+                                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1" title="{{ $post->created_at->format('M j, Y g:i A') }}">
+                                    @if ($post->created_at->diffInHours(now()) < 672)
+                                        {{ $post->created_at->diffForHumans() }}
+                                    @else
+                                        {{ $post->created_at->format('M j, Y') }}
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                        <div class="hidden lg:block">
+                            <livewire:posts.post-options :post="$post" />
                         </div>
                     </div>
-
-                    <livewire:posts.post-options :post="$post" />
-                    
                 </div>
 
-                <p class="pt-2 font-semibold text-xl">{{ $post->caption }}</p>
-                <p>{!! nl2br(e($post->description)) !!}</p>
+                <!-- Post Content -->
+                <div class="md:px-4 py-4">
+                    <h3 class="text-lg font-bold text-zinc-900 dark:text-white mb-2">
+                        {{ $post->caption }}
+                    </h3>
+                    <p class="text-zinc-700 dark:text-zinc-300 text-sm leading-relaxed line-clamp-4">
+                        {!! nl2br(e($post->description)) !!}
+                    </p>
+                </div>
+
+                <!-- Post Attachments -->
+                @if ($post->attachments()->count() >= 1)
+                    <livewire:attachments.post :post="$post" />
+                @endif
+
+                <!-- Engagement Stats & Actions -->
+                <div class="md:px-4 py-3">
+                    <livewire:posts.like :post="$post" />
+                </div>
+
+                <div class="md:px-4">
+                    <livewire:posts.comments :post="$post" />
+                </div>
+
+                <!-- Comment Box -->
+                <div class="fixed md:static bottom-0 pb-2 md:px-4 right-4 left-4 bg-white dark:bg-zinc-900">
+                    <div id="filePreview"></div>
+                    <livewire:posts.comment-box :post="$post" />
+                </div>
+                <div class="h-10 md:hidden"></div>
             </div>
-
-            @if ($post->attachments()->count() >= 1)
-                <livewire:attachments.post :post="$post" />
-            @endif
-
-            <livewire:posts.like :post="$post" />
-                
-            {{-- <div class="hidden md:block">
-                <div id="filePreview" class="mb-4"></div>
-                <livewire:posts.comment-box :post="$post" />
-            </div> --}}
-
-            <livewire:posts.comments :post="$post" />
-
-            <div class="fixed md:static bottom-0 pb-2 right-4 left-4 bg-white dark:bg-zinc-900">
-                <div id="filePreview"></div>
-                <livewire:posts.comment-box :post="$post" />
-            </div>
-
-            <div class="h-10"></div>
         </div>
     </div>
 </x-layouts.app>

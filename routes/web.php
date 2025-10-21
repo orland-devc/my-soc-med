@@ -35,6 +35,7 @@ Route::middleware(['auth'])->group(function () {
     // })->name('user.profile');
 
     Route::get('/user/{id}', [UserController::class, 'show'])->name('user.show');
+    Route::post('/updateProfilePhoto', [UserController::class, 'updateProfilePhoto'])->name('user.update_picture');
 });
 
 Route::middleware(['auth'])->group(function () {

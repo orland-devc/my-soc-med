@@ -1,27 +1,13 @@
 <x-layouts.app :title="__('Notifications')">
     <div class="relative">
-        <div class="relative mb-6 w-full hidden md:block">
-            <div class="flex justify-between">
-                <div class="">
-                    <flux:heading size="xl" level="1">{{ __('Notifications') }}</flux:heading>
-                    {{-- <flux:subheading size="lg" class="mb-6">{{ __('') }}</flux:subheading> --}}
-                </div>
-            </div>
 
-            <flux:separator variant="subtle" />
-            
-        </div>
-
-
-        <div class="relative">
-            <div class="flex sm:w-full md:w-2/3 lg:w-160 flex-1 flex-col m-auto gap-4">
-                <div class="md:hidden flex items-center justify-between">
-                    <flux:heading size="lg" level="2" class="text-center font-bold">
-                        {{ __('Notifications') }}
-                    </flux:heading>
-                    <img src="{{ asset(Auth::user()->profile_photo_path) }}" alt="" class="w-7 h-7 rounded-full inline border">
-                </div>
-                
+        <div class="max-w-2xl mx-auto md:border md:rounded-2xl md:p-4">
+            <!-- Mobile Header -->
+            <div class=" flex items-center justify-between mb-6">
+                <h1 class="text-2xl flex items-center font-bold text-zinc-900 dark:text-white">
+                    {{ __('Notifications') }}
+                </h1>
+                <livewire:auth.user-options/>
             </div>
         </div>
 

@@ -10,8 +10,6 @@
 
 <link rel="preconnect" href="https://fonts.bunny.net">
 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -34,9 +32,9 @@
 
 <script>
     lightbox.option({
-        resizeDuration: 200,
+        resizeDuration: 100,
         wrapAround: true,
-        fadeDuration: 200,
+        fadeDuration: 100,
         imageFadeDuration: 200,
         alwaysShowNavOnTouchDevices: true
     });

@@ -21,3 +21,5 @@ export default defineConfig({
         // },
     },
 });
+
+// php artisan serve --host="192.168.43.228" --port="8000"

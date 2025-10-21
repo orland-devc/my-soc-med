@@ -2,7 +2,7 @@
     <div class="relative">
         <div class="relative">
             <div class="flex sm:w-full md:w-2/3 lg:w-160 flex-1 flex-col m-auto gap-4" x-data="{ posts: true, reposts: false, privates: false, saved: false, archived: false }" >
-                <div class="md:hidden flex items-center justify-between">
+                <div class="lg:hidden flex items-center justify-between">
                     <a class="cursor-pointer flex items-center p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 active:bg-zinc-200 dark:active:bg-zinc-800 rounded-full transition-all" onclick="history.back()">
                         <i class="fa-solid fa-chevron-left text-xl"></i>
                     </a>
@@ -126,83 +126,85 @@
                             <i class="fa-solid fa-retweet"></i>
                             <span class="text-xs md:text-sm">Reposts</span>
                         </div>
-                        <div 
-                            @click="
-                                posts = false;
-                                reposts = false;
-                                privates = true;
-                                saved = false;
-                                archived = false;
+                        @if ($user->id == Auth::id())
+                            <div 
+                                @click="
+                                    posts = false;
+                                    reposts = false;
+                                    privates = true;
+                                    saved = false;
+                                    archived = false;
 
-                                postsTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                postsTab.classList.add('text-zinc-500', );
-                                repostsTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                repostsTab.classList.add('text-zinc-500');
-                                privateTab.classList.add('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                privateTab.classList.remove('text-zinc-500');
-                                savedTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                savedTab.classList.add('text-zinc-500');
-                                archiveTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                archiveTab.classList.add('text-zinc-500');
-                            " 
-                            id="private-tab"
-                            class="flex flex-1 text-zinc-500 items-center justify-center gap-2 py-2 hover:text-zinc-800 dark:hover:text-white cursor-pointer">
-                            <i class="fa-solid fa-lock"></i>
-                            <span class="text-xs md:text-sm">Private</span>
-                        </div>
-                        <div 
-                            @click="
-                                posts = false;
-                                reposts = false;
-                                privates = false;
-                                saved = true;
-                                archived = false;
-                                
-                                postsTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                postsTab.classList.add('text-zinc-500', );
-                                repostsTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                repostsTab.classList.add('text-zinc-500');
-                                privateTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                privateTab.classList.add('text-zinc-500');
-                                savedTab.classList.add('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                savedTab.classList.remove('text-zinc-500');
-                                archiveTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                archiveTab.classList.add('text-zinc-500');
-                            " 
-                            id="saved-tab"
-                            class="flex flex-1 text-zinc-500 items-center justify-center gap-2 py-2 hover:text-zinc-800 dark:hover:text-white cursor-pointer">
-                            <i class="fa-solid fa-bookmark"></i>
-                            <span class="text-xs md:text-sm">Saved</span>
-                        </div>
-                        <div 
-                            @click="
-                                posts = false;
-                                reposts = false;
-                                privates = false;
-                                saved = false;
-                                archived = true;
+                                    postsTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    postsTab.classList.add('text-zinc-500', );
+                                    repostsTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    repostsTab.classList.add('text-zinc-500');
+                                    privateTab.classList.add('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    privateTab.classList.remove('text-zinc-500');
+                                    savedTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    savedTab.classList.add('text-zinc-500');
+                                    archiveTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    archiveTab.classList.add('text-zinc-500');
+                                " 
+                                id="private-tab"
+                                class="flex flex-1 text-zinc-500 items-center justify-center gap-2 py-2 hover:text-zinc-800 dark:hover:text-white cursor-pointer">
+                                <i class="fa-solid fa-lock"></i>
+                                <span class="text-xs md:text-sm">Private</span>
+                            </div>
+                            <div 
+                                @click="
+                                    posts = false;
+                                    reposts = false;
+                                    privates = false;
+                                    saved = true;
+                                    archived = false;
+                                    
+                                    postsTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    postsTab.classList.add('text-zinc-500', );
+                                    repostsTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    repostsTab.classList.add('text-zinc-500');
+                                    privateTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    privateTab.classList.add('text-zinc-500');
+                                    savedTab.classList.add('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    savedTab.classList.remove('text-zinc-500');
+                                    archiveTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    archiveTab.classList.add('text-zinc-500');
+                                " 
+                                id="saved-tab"
+                                class="flex flex-1 text-zinc-500 items-center justify-center gap-2 py-2 hover:text-zinc-800 dark:hover:text-white cursor-pointer">
+                                <i class="fa-solid fa-bookmark"></i>
+                                <span class="text-xs md:text-sm">Saved</span>
+                            </div>
+                            <div 
+                                @click="
+                                    posts = false;
+                                    reposts = false;
+                                    privates = false;
+                                    saved = false;
+                                    archived = true;
 
-                                postsTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                postsTab.classList.add('text-zinc-500', );
-                                repostsTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                repostsTab.classList.add('text-zinc-500');
-                                privateTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                privateTab.classList.add('text-zinc-500');
-                                savedTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                savedTab.classList.add('text-zinc-500');
-                                archiveTab.classList.add('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
-                                archiveTab.classList.remove('text-zinc-500');
-                            " 
-                            id="archived-tab"
-                            class="flex flex-1 text-zinc-500 items-center justify-center gap-2 py-2 hover:text-zinc-800 dark:hover:text-white cursor-pointer">
-                            <i class="fa-solid fa-box-archive"></i>
-                            <span class="text-xs md:text-sm">Archived</span>
-                        </div>
+                                    postsTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    postsTab.classList.add('text-zinc-500', );
+                                    repostsTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    repostsTab.classList.add('text-zinc-500');
+                                    privateTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    privateTab.classList.add('text-zinc-500');
+                                    savedTab.classList.remove('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    savedTab.classList.add('text-zinc-500');
+                                    archiveTab.classList.add('text-black', 'dark:text-white', 'border-b-2', 'border-black', 'dark:border-white');
+                                    archiveTab.classList.remove('text-zinc-500');
+                                " 
+                                id="archived-tab"
+                                class="flex flex-1 text-zinc-500 items-center justify-center gap-2 py-2 hover:text-zinc-800 dark:hover:text-white cursor-pointer">
+                                <i class="fa-solid fa-box-archive"></i>
+                                <span class="text-xs md:text-sm">Archived</span>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
                 <div x-show="posts" class="grid auto-rows-min gap-4">
-                    @forelse ($user->posts->sortByDesc('created_at') as $post)
+                    @forelse ($user->posts->whereIn('privacy', [0, 1])->sortByDesc('created_at') as $post)
                         <livewire:profiles.posts :post="$post" />
                     @empty
                         <p class="text-center text-zinc-500 dark:text-zinc-400">No posts to show.</p>
@@ -220,7 +222,7 @@
                 </div>
 
                 <div x-show="privates" class="grid auto-rows-min gap-4">
-                    @forelse ($user->posts->where('privacy', 3)->sortByDesc('created_at') as $post)
+                    @forelse ($user->posts->where('privacy', 2)->sortByDesc('created_at') as $post)
                         <livewire:profiles.posts :post="$post" />
                     @empty
                         <p class="text-center text-zinc-500 dark:text-zinc-400">No private posts to show.</p>
@@ -257,14 +259,6 @@
 </style>
 
 <script>
-    // const tabs = document.querySelectorAll('[id$="-tab"]');
-    // tabs.forEach(tab => {
-    //     tab.addEventListener('click', () => {
-    //         tabs.forEach(t => t.classList.remove('border-b-2', 'border-blue-500'));
-    //         tab.classList.add('border-b-2', 'border-blue-500');
-    //     });
-    // });
-
     const postsTab = document.getElementById('posts-tab');
     const repostsTab = document.getElementById('reposts-tab');
     const privateTab = document.getElementById('private-tab');

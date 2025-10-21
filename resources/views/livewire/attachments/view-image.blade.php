@@ -28,5 +28,77 @@ new class extends Component {
     </div>
     @endif
     <img id="imagePreview" src="" alt="" class="h-[80vh] hidden">
-    <div id="otherFile" class="hidden text-white text-2xl flex-col items-center gap-8"></div>       
+    <div id="otherFile" class="hidden text-white text-2xl flex-col items-center gap-8"></div>   
+    
+    <script>
+        let currentIndex = 0;
+        const attachments = @json($ticket->attachments->pluck('file_location'));
+        const fileNames = @json($ticket->attachments->pluck('file_name'));
+
+        function viewImage(imageUrl, fileName, index, fileExtension) {
+            const img = document.getElementById('imagePreview');
+            const otherFile = document.getElementById('otherFile');
+            const titleName = document.getElementById('fileName');
+            if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png')) {
+                otherFile.classList.add('hidden');
+                img.classList.remove('hidden');
+                titleName.innerHTML = `<p>${fileName}</p>`;
+                img.src = imageUrl;
+                img.dataset.fileName = fileName;
+                const imageTab = document.getElementById('imageTab');
+                imageTab.style.display = "flex";
+            }
+            else {
+                titleName.innerHTML = `<p>${fileName}</p>`;
+                img.classList.add('hidden');
+                otherFile.classList.remove('hidden');
+                otherFile.classList.add('flex');
+                const imageTab = document.getElementById('imageTab');
+                imageTab.style.display = "flex";
+                otherFile.innerHTML = `<p>Can't view this file. Please download it.</p><a href="${imageUrl}" class="px-4 py-2 bg-white rounded-xl text-gray-600 hover:text-blue-600" download>Download ${fileName} <i class="fa-solid fa-download ml-4"></i></a>`;
+            }
+            
+            currentIndex = index;
+        }
+        function hideimageTab() {
+            const img = document.getElementById('imageTab');
+            img.style.display = "none";
+        }
+
+        function downloadImage() {
+            const imageUrl = document.getElementById('imagePreview').src;
+            const fileName = document.getElementById('imagePreview').dataset.fileName;
+            const link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function prevImage() {
+            currentIndex = (currentIndex === 0) ? attachments.length - 1 : currentIndex - 1;
+            const imageUrl = "{{ asset('/') }}" + attachments[currentIndex];
+            const fileName = fileNames[currentIndex];
+            document.getElementById('imagePreview').src = imageUrl;
+            document.getElementById('imagePreview').dataset.fileName = fileName;
+        }
+
+        function nextImage() {
+            currentIndex = (currentIndex === attachments.length - 1) ? 0 : currentIndex + 1;
+            const imageUrl = "{{ asset('/') }}" + attachments[currentIndex];
+            const fileName = fileNames[currentIndex];
+            document.getElementById('imagePreview').src = imageUrl;
+            document.getElementById('imagePreview').dataset.fileName = fileName;
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                prevImage();
+            } else if (event.key === 'ArrowRight') {
+                nextImage();
+            }
+        });
+
+    </script>
 </div>

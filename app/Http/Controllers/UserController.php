@@ -64,4 +64,34 @@ class UserController extends Controller
     {
         //
     }
+
+    public function updateProfilePhoto(Request $request)
+{
+    $file_dir = 'images/uploads/';
+
+    $request->validate([
+        'user_id' => 'required|integer|exists:users,id',
+        'profilePicture' => 'required|image|mimes:png,jpg,jpeg|max:10240',
+    ]);
+
+    $user = User::findOrFail($request->user_id);
+
+    // Check if file is uploaded
+    if ($request->hasFile('profilePicture')) {
+        $file = $request->file('profilePicture');
+
+        // Create unique name to prevent overwriting
+        $file_name = time() . '_' . $file->getClientOriginalName();
+
+        // Move file to target directory (inside public)
+        $file->move(public_path($file_dir), $file_name);
+
+        // Update user's profile photo path
+        $user->profile_photo_path = $file_dir . $file_name;
+        $user->save();
+    }
+
+    return redirect()->back()->with('success', 'Profile photo updated successfully!');
+}
+
 }

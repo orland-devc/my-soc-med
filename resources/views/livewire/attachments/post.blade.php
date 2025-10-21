@@ -18,9 +18,9 @@ new class extends Component {
 @if ($post->attachments()->count() >= 1)
     @if ($attachments->count() > 1)
     @if ($attachments->count() == 3)
-        <div class="grid grid-cols-3 gap-2">
+        <div class="grid grid-cols-3 gap-2 mx-3">
     @else
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-2 mx-3">
     @endif
         @foreach ($visibleAttachments as $index => $attachment)
             @php
@@ -57,7 +57,7 @@ new class extends Component {
         @endforeach
     </div>
     @else
-    <div class="flex mx-[-15px] justify-center">
+    <div class="flex mx-3 justify-center">
         @php
             $file = $attachments->first();
         @endphp

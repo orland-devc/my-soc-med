@@ -1,20 +1,30 @@
 <?php
 
 use App\Models\Post;
+use App\Models\User;
 use App\Models\SavedPost;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
 
 new class extends Component {
     public Post $post;
+    public User $user;
     public bool $isSaved = false;
 
     public $editedCaption = '';
     public $editedContent = '';
     public $editedPrivacy;
+    public bool $isFollowing = false;
+    public bool $isFollowBack = false;
+
 
     public function mount()
     {
+        $auth = Auth::user();
+        $this->user = $this->post->user;
+        $this->isFollowing = $auth->isFollowing($this->post->user);
+        $this->isFollowBack = $this->post->user->isFollowing($auth);
+
         if (Auth::check()) {
             $this->isSaved = SavedPost::where('user_id', Auth::id())
                 ->where('post_id', $this->post->id)
@@ -119,6 +129,22 @@ new class extends Component {
         $this->post->update([
             'is_pinned' => true,
         ]);
+    }
+
+    public function toggleFollow(): void
+    {
+        $auth = Auth::user();
+        if (! $auth) return;
+
+        if ($auth->isFollowing($this->user)) {
+            $auth->following()->detach($this->user->id);
+            $this->isFollowing = false;
+        } else {
+            $auth->following()->attach($this->user->id);
+            $this->isFollowing = true;
+        }
+
+        $this->isFollowBack = $this->user->isFollowing($auth);
     }
 };
 ?>
@@ -226,11 +252,27 @@ new class extends Component {
             </button>
 
             <button 
-                wire:click="reportPost"
                 class="w-full flex justify-between items-center px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-600"
+                wire:click="toggleFollow"
             >
-                <p class="truncate">Unfollow {{ $post->user->name }}</p>
-                <i class="fa-solid fa-user-xmark text-lg ml-2"></i>
+                @if ($isFollowing)
+                    <p class="truncate">
+                        Unfollow {{$post->user->name}}
+                    </p>
+                    <i class="fa fa-user-minus text-lg ml-2"></i>
+                @elseif ($isFollowBack)
+                    <p class="truncate">
+                        Follow Back {{$post->user->name}}
+                    </p>
+                    <i class="fa fa-user-plus text-lg ml-2"></i>
+                @else
+                    <p class="truncate">
+                        Follow {{$post->user->name}}
+                    </p>
+
+                    <i class="fa fa-user-plus text-lg ml-2"></i>
+                @endif
+
             </button>
 
             <button 
@@ -285,9 +327,9 @@ new class extends Component {
         x-transition
         class="fixed inset-0 bg-black/80 flex justify-center items-center z-50"
     >
-        <div class="bg-white sm:w-full md:w-2/3 lg:w-160 dark:bg-zinc-800 rounded-xl p-6 w-96 flex flex-col gap-2">
-            <h2 class="text-lg font-semibold mb-2">Delete Post?</h2>
-            <div>
+        <div class="bg-white sm:w-full md:w-2/3 lg:w-160 dark:bg-zinc-800 rounded-xl p-3 w-96 flex flex-col gap-2">
+            <h2 class="text-lg font-semibold mb-2 p-3">Delete Post?</h2>
+            <div class="p-3">
                 <div class="flex items-center gap-4">
                     <div class="flex items-center">
                         <img src="{{ asset($post->user->profile_photo_path) }}" alt="user-profile" class="w-9 h-9 rounded-full inline me-2 object-cover">
@@ -316,10 +358,10 @@ new class extends Component {
             @if ($post->attachments()->count() >= 1)
                 <livewire:attachments.post :post="$post" />
             @endif
-            <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-4 px-3">
                 Are you sure you want to delete this post? This action cannot be undone.
             </p>
-            <div class="flex justify-end gap-3">
+            <div class="flex justify-end gap-3 p-3">
                 <button 
                     @click="showDeleteModal = false"
                     class="px-3 py-1 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700"
@@ -370,9 +412,9 @@ new class extends Component {
         @click.away="editPrivacyModal = false"
         class="fixed inset-0 bg-black/80 flex justify-center items-center z-50"
     >
-        <div class="bg-white sm:w-full md:w-2/3 lg:w-160 dark:bg-zinc-800 rounded-xl p-6 w-96 flex flex-col gap-2">
-            <div>
-                <div class="flex items-center gap-4">
+        <div class="bg-white sm:w-full md:w-2/3 lg:w-160 dark:bg-zinc-800 rounded-xl w-96 flex flex-col gap-2 p-3">
+            <div class="p-3">
+                <div class="flex items-center gap-3">
                     <div class="flex items-center">
                         <img src="{{ asset($post->user->profile_photo_path) }}" alt="user-profile" class="w-9 h-9 rounded-full inline me-2 object-cover">
                         <div>
@@ -411,7 +453,7 @@ new class extends Component {
                 <livewire:attachments.post :post="$post" />
             @endif
 
-            <div class="flex justify-end gap-3 mt-4">
+            <div class="flex justify-end gap-3 mt-4 p-3">
                 <flux:button @click="editPrivacyModal = false">
                     {{ __('Cancel') }}
                 </flux:button>

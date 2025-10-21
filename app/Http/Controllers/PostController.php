@@ -7,6 +7,7 @@ use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
@@ -20,8 +21,26 @@ class PostController extends Controller
      */
     public function index()
     {
+        $auth = Auth::user();
+
         $posts = Post::where('archived', false)
-            ->whereIn('privacy', [0, 1])
+            ->where(function ($query) use ($auth) {
+                // Show public posts to everyone
+                $query->where('privacy', 0);
+
+                if ($auth) {
+                    // Find mutual followers (friends)
+                    $mutualIds = DB::table('follows as f1')
+                        ->join('follows as f2', 'f1.following_id', '=', 'f2.follower_id')
+                        ->where('f1.follower_id', $auth->id)
+                        ->where('f2.following_id', $auth->id)
+                        ->pluck('f1.following_id');
+
+                    // Include posts from mutual friends or yourself
+                    $query->orWhereIn('uploader', $mutualIds)
+                        ->orWhere('uploader', $auth->id);
+                }
+            })
             ->orderByDesc('created_at')
             ->get();
 
@@ -29,6 +48,7 @@ class PostController extends Controller
 
         return view('posts.index', compact('posts', 'likes'));
     }
+
 
     /**
      * Show the form for creating a new resource.

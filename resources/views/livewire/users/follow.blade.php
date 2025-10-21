@@ -33,20 +33,24 @@ new class extends Component {
     }
 };
 ?>
-
-<flux:button
-    wire:click="toggleFollow"
-    :variant="$isFollowing ? 'filled' : 'primary'"
->
-    @if ($isFollowing)
-        Unfollow 
-        <i class="fa fa-user-minus"></i>
-    @elseif ($isFollowBack)
-        Follow Back
-        <i class="fa fa-user-plus"></i>
-    @else
-        Follow
-        <i class="fa fa-user-plus"></i>
-    @endif
-</flux:button>
+<div wire:poll.1s>
+    <flux:button
+        wire:click="toggleFollow"
+        :variant="$isFollowing ? 'filled' : 'primary'"
+    >
+        @if ($isFollowing && $isFollowBack)
+            Friends
+            <i class="fa-solid fa-user-group"></i>
+        @elseif ($isFollowing)
+            Unfollow 
+            <i class="fa fa-user-minus"></i>
+        @elseif ($isFollowBack)
+            Follow Back
+            <i class="fa fa-user-plus"></i>
+        @else
+            Follow
+            <i class="fa fa-user-plus"></i>
+        @endif
+    </flux:button>
+</div>
 
