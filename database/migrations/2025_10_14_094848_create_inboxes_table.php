@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('inboxes', function (Blueprint $table) {
             $table->id();
+            $table->string('user_id')->constrained()->onDelete('cascade');
+            $table->string('message');
             $table->timestamps();
         });
     }

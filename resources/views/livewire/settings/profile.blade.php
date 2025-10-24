@@ -111,5 +111,36 @@ new class extends Component {
         </form>
 
         <livewire:settings.delete-user-form />
+
+        <div x-data="{ open: false }" class="mt-10">
+            <flux:button variant="danger" @click="open = true">{{ __('Deactivate Account') }}</flux:button>
+
+            <div 
+                x-show="open"
+                {{-- what abot closing when `esc` is pushed? --}}
+                @keydown.escape.window="open = false"
+                x-transition
+                class="fixed inset-0 bg-black/80 flex justify-center items-center z-50"
+            >
+                <div @click.away="open = false" class="bg-white sm:w-full md:w-2/3 lg:w-160 dark:bg-zinc-800 rounded-xl p-6 w-96 flex flex-col gap-2">
+                    <h2 class="text-lg font-semibold mb-2">Deactivate Account?</h2>
+                    <flux:text>
+                        Are you sure you want to deactivate your account? All your data will be hidden and you can reactivate your account by logging back in.
+                    </flux:text>
+                    <div class="flex flex-col gap-3 mt-4 p-3">
+                        <form method="POST" action="{{ route('account.deactivate') }}" class="flex flex-col gap-3">
+                            @csrf
+                            <flux:input type=password name="password" required :label="__('Enter password tp confirm')" placeholder="{{ __('Password') }}" viewable/>
+                            <div class="flex items-center justify-end gap-2">
+                                <a @click="open = false" class="text-sm cursor-pointer px-3 py-2 bg-zinc-500 dark-bg-gray-300 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all">Cancel</a>
+                                <flux:button variant="danger" type="submit">{{ __('Deactivate Account') }}</flux:button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
     </x-settings.layout>
 </section>

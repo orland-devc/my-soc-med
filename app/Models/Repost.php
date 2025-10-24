@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\ActiveUserScope;
 use Illuminate\Database\Eloquent\Model;
 
 class Repost extends Model
@@ -41,5 +42,10 @@ class Repost extends Model
     public function isLikedBy(User $user): bool
     {
         return $this->likes()->where('user_id', $user->id)->exists();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new ActiveUserScope);
     }
 }

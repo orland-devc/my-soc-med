@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\ActiveUserScope;
 use Illuminate\Database\Eloquent\Model;
 
 class ReplyCommentLike extends Model
@@ -23,6 +24,11 @@ class ReplyCommentLike extends Model
 
     public function likedByCreator()
     {
-        return $this->likes()->where('user_id', $this->post->uploader)->exists();
+        return $this->likes()->where('user_id', $this->post->user_id)->exists();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new ActiveUserScope);
     }
 }

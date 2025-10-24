@@ -19,13 +19,13 @@ new class extends Component {
     public function refreshComments(): void
     {
         $creatorComments = $this->post->comments()
-            ->where('user_id', $this->post->uploader)
+            ->where('user_id', $this->post->user_id)
             ->with(['user', 'likes', 'replies.user', 'replies.likes'])
             ->orderBy('created_at', 'asc') // oldest first
             ->get();
 
         $otherComments = $this->post->comments()
-            ->where('user_id', '!=', $this->post->uploader)
+            ->where('user_id', '!=', $this->post->user_id)
             ->with(['user', 'likes', 'replies.user', 'replies.likes'])
             ->orderBy('created_at', 'desc') // newest first
             ->get();
@@ -107,7 +107,7 @@ new class extends Component {
                                 @if ($comment->user->popular)
                                     <img src="{{asset('images/image.png')}}" alt="" class="h-4">
                                 @endif
-                                @if ($comment->user_id == $comment->post->uploader)
+                                @if ($comment->user_id == $comment->post->user_id)
                                     <span class="bg-zinc-300 dark:bg-zinc-600 text-zinc-600 dark:text-zinc-200 text-sm px-1 rounded-md flex-shrink-0">
                                         Creator
                                     </span>
@@ -141,7 +141,7 @@ new class extends Component {
                             x-transition 
                             class="absolute right-5 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 shadow-lg rounded-md text-sm w-32 z-50"
                             @click.away="showMenu = false">
-                            @if ($post->uploader == Auth::id())
+                            @if ($post->user_id == Auth::id())
                                 <button class="w-full flex justify-between items-center px-3 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-800">
                                     Pin 
                                     <i class="fa fa-thumbtack text-zinc-500 dark:text-zinc-500"></i>
@@ -179,7 +179,7 @@ new class extends Component {
                                 </button>                            
                             @endif
 
-                            @if ($comment->user_id == Auth::id() || $post->uploader == Auth::id())
+                            @if ($comment->user_id == Auth::id() || $post->user_id == Auth::id())
                                 <button class="w-full flex justify-between items-center px-3 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-800 text-red-500">
                                     Delete
                                     <i class="fa fa-trash"></i>
@@ -235,7 +235,7 @@ new class extends Component {
                                         <a href="/posts/{{ $reply->user_id }}" class="text-zinc-500 dark:text-zinc-400 hover:underline truncate max-w-[10rem] sm:max-w-[12rem] md:max-w-[14rem] lg:max-w-full">
                                             {{ $reply->user->name }}
                                         </a>
-                                        @if ($reply->user_id == $reply->comment->post->uploader)
+                                        @if ($reply->user_id == $reply->comment->post->user_id)
                                             <span class="bg-zinc-300 dark:bg-zinc-600 text-zinc-600 dark:text-zinc-200 text-sm px-1 rounded-md flex-shrink-0">Creator</span>
                                         @endif
                                     </div>

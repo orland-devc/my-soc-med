@@ -35,7 +35,8 @@ new class extends Component {
     </flux:modal.trigger>
 
     <flux:modal name="confirm-user-deletion" :show="$errors->isNotEmpty()" focusable class="max-w-lg">
-        <form wire:submit="deleteUser" class="space-y-6">
+        <form method="POST" action="{{ route('account.delete') }}" class="space-y-6">
+            @csrf
             <div>
                 <flux:heading size="lg">{{ __('Are you sure you want to delete your account?') }}</flux:heading>
 
@@ -44,7 +45,7 @@ new class extends Component {
                 </flux:subheading>
             </div>
 
-            <flux:input wire:model="password" :label="__('Password')" type="password" />
+            <flux:input name="password" :label="__('Password')" type="password" />
 
             <div class="flex justify-end space-x-2 rtl:space-x-reverse">
                 <flux:modal.close>

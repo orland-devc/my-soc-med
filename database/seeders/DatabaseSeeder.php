@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
         $this->command->info("Account {$user2->email} created successfully.");
 
         // $post = Post::create([
-        //     'uploader' => 2,
+        //     'user_id' => 2,
         //     'caption' => 'My love🤍',
         // ]);
 

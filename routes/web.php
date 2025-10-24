@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\InboxController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostController;
@@ -36,6 +37,13 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/user/{id}', [UserController::class, 'show'])->name('user.show');
     Route::post('/updateProfilePhoto', [UserController::class, 'updateProfilePhoto'])->name('user.update_picture');
+
+    Route::get('/account/export', [AccountController::class, 'showExportForm'])->name('account.export.form');
+    Route::post('/account/export', [AccountController::class, 'export'])->name('account.export');
+    Route::post('/account/test-export', [AccountController::class, 'testZip'])->name('account.test-export');
+
+    Route::post('/account/deactivate', [AccountController::class, 'deactivate'])->name('account.deactivate');
+    Route::post('/account/delete', [AccountController::class, 'destroy'])->name('account.delete');
 });
 
 Route::middleware(['auth'])->group(function () {

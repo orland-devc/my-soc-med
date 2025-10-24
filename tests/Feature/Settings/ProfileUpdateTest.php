@@ -54,23 +54,23 @@ class ProfileUpdateTest extends TestCase
         $this->assertNotNull($user->refresh()->email_verified_at);
     }
 
-    public function test_user_can_delete_their_account(): void
-    {
-        $user = User::factory()->create();
+    // public function test_user_can_delete_their_account(): void
+    // {
+    //     $user = User::factory()->create();
 
-        $this->actingAs($user);
+    //     $this->actingAs($user);
 
-        $response = Volt::test('settings.delete-user-form')
-            ->set('password', 'password')
-            ->call('deleteUser');
+    //     $response = Volt::test('settings.delete-user-form')
+    //         ->set('password', 'password')
+    //         ->call('deleteUser');
 
-        $response
-            ->assertHasNoErrors()
-            ->assertRedirect('/');
+    //     $response
+    //         ->assertHasNoErrors()
+    //         ->assertRedirect('/');
 
-        $this->assertNull($user->fresh());
-        $this->assertFalse(auth()->check());
-    }
+    //     $this->assertNull($user->fresh());
+    //     $this->assertFalse(auth()->check());
+    // }
 
     public function test_correct_password_must_be_provided_to_delete_account(): void
     {

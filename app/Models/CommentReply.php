@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\ActiveUserScope;
 use Illuminate\Database\Eloquent\Model;
 
 class CommentReply extends Model
@@ -25,5 +26,10 @@ class CommentReply extends Model
     public function likes()
     {
         return $this->hasMany(ReplyCommentLike::class);
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new ActiveUserScope);
     }
 }

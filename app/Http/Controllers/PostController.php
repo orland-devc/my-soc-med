@@ -37,8 +37,8 @@ class PostController extends Controller
                         ->pluck('f1.following_id');
 
                     // Include posts from mutual friends or yourself
-                    $query->orWhereIn('uploader', $mutualIds)
-                        ->orWhere('uploader', $auth->id);
+                    $query->orWhereIn('user_id', $mutualIds)
+                        ->orWhere('user_id', $auth->id);
                 }
             })
             ->orderByDesc('created_at')
@@ -70,7 +70,7 @@ class PostController extends Controller
         ]);
 
         $post = new Post;
-        $post->uploader = Auth::user()->id;
+        $post->user_id = Auth::user()->id;
         $post->caption = $request->caption;
         $post->description = $request->description;
         $post->save();
@@ -105,13 +105,13 @@ class PostController extends Controller
 
         // Separate creator's and others' comments
         $creatorComments = $post->comments()
-            ->where('user_id', $post->uploader)
+            ->where('user_id', $post->user_id)
             ->with(['user', 'likes', 'replies.user', 'replies.likes'])
             ->orderBy('created_at', 'asc') // oldest first
             ->get();
 
         $otherComments = $post->comments()
-            ->where('user_id', '!=', $post->uploader)
+            ->where('user_id', '!=', $post->user_id)
             ->with(['user', 'likes', 'replies.user', 'replies.likes'])
             ->orderBy('created_at', 'desc') // newest first
             ->get();

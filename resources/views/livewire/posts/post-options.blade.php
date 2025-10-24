@@ -38,7 +38,7 @@ new class extends Component {
 
     public function deletePost(): void
     {
-        if ($this->post->uploader != Auth::user()->id) return;
+        if ($this->post->user_id != Auth::user()->id) return;
 
         $this->post->delete();
         $this->dispatch('post-deleted');
@@ -47,7 +47,7 @@ new class extends Component {
 
     public function updatePost(): void
     {
-        if ($this->post->uploader != Auth::user()->id) return;
+        if ($this->post->user_id != Auth::user()->id) return;
 
         $this->validate([
             'editedCaption' => 'nullable|string|max:2000',
@@ -101,7 +101,7 @@ new class extends Component {
 
     public function updatePrivacy(): void
     {
-        if ($this->post->uploader != Auth::user()->id) return;
+        if ($this->post->user_id != Auth::user()->id) return;
 
         $this->validate([
             'editedPrivacy' => 'nullable|integer|in:0,1,2',
@@ -118,7 +118,7 @@ new class extends Component {
     public function pinPost(): void
     {
         $auth = Auth::user();
-        if ($this->post->uploader != $auth->id) return;
+        if ($this->post->user_id != $auth->id) return;
 
         // Unpin all posts of user
         $auth->posts()->update([
@@ -176,7 +176,7 @@ new class extends Component {
         x-transition
         class="absolute right-0 mt-2 border w-56 text-sm bg-white dark:bg-zinc-800 rounded-xl shadow-2xl overflow-hidden z-100"
     >
-        @if (Auth::user()->id == $post->uploader)
+        @if (Auth::user()->id == $post->user_id)
             <button 
                 @click="open = false"
                 class="w-full flex justify-between items-center px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 active:bg-zinc-200 dark:active:bg-zinc-600"

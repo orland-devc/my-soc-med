@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('popular')->default(false);
             $table->rememberToken();
+            $table->softDeletes()->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
 

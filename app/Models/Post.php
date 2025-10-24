@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\ActiveUserScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
@@ -12,7 +13,7 @@ class Post extends Model
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'uploader',
+        'user_id',
         'caption',
         'description',
         'privacy',
@@ -23,7 +24,7 @@ class Post extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'uploader');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function attachments()
@@ -66,5 +67,10 @@ class Post extends Model
     public function archived()
     {
         return $this->where('archived', true);
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new ActiveUserScope);
     }
 }

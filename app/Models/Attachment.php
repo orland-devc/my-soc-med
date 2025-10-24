@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\ActiveUserScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -44,5 +45,10 @@ class Attachment extends Model
     public function chat()
     {
         return $this->belongsTo(Chat::class);
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new ActiveUserScope);
     }
 }

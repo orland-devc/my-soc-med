@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->string('uploader')->constrained()->onDelete('cascade');
+            $table->string('user_id')->constrained()->onDelete('cascade');
             $table->string('caption')->nullable();
             $table->string('description')->nullable();
             $table->integer('privacy')->default(0);

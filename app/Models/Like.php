@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\ActiveUserScope;
 use Illuminate\Database\Eloquent\Model;
 
 class Like extends Model
@@ -25,5 +26,10 @@ class Like extends Model
     public function repost()
     {
         return $this->belongsTo(Repost::class);
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new ActiveUserScope);
     }
 }

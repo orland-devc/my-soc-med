@@ -40,7 +40,24 @@ new #[Layout('components.layouts.auth')] class extends Component {
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        $this->redirectIntended(default: route('posts', absolute: false), navigate: true);
+        // if (Auth::user()->is_admin) {
+        //     $this->redirectIntended(default: route('admin.dashboard', absolute: false), navigate: true);
+        //     return;
+        // }
+
+        if (Auth::user()->is_active == false) {
+            // Auth::logout();
+            // throw ValidationException::withMessages([
+            //     'email' => __('Your account is deactivated. Please contact support.'),
+            // ]);
+            Auth::user()->is_active = true;
+            Auth::user()->save();
+            $this->redirectIntended(default: route('posts', absolute: false), navigate: true);
+        }
+
+        else {
+            $this->redirectIntended(default: route('posts', absolute: false), navigate: true);
+        }
     }
 
     /**

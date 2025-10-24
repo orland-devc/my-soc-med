@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\ActiveUserScope;
 use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
@@ -40,7 +41,7 @@ class Comment extends Model
 
     public function likedByCreator()
     {
-        return $this->likes()->where('user_id', $this->post->uploader)->exists() && $this->user_id != $this->post->uploader;
+        return $this->likes()->where('user_id', $this->post->user_id)->exists() && $this->user_id != $this->post->user_id;
     }
 
     public function isLikedBy(User $user): bool
@@ -78,5 +79,10 @@ class Comment extends Model
     public function isReply(): bool
     {
         return ! is_null($this->parent_id);
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new ActiveUserScope);
     }
 }
