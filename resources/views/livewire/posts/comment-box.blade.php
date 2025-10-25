@@ -2,6 +2,7 @@
 
 use App\Models\Post;
 use App\Models\Comment;
+use App\Models\UserNotification;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
 
@@ -18,7 +19,7 @@ new class extends Component {
             'user_id' => Auth::id(),
             'content' => $this->commentText,
         ]);
-
+        UserNotification::sendCommentNotification($this->post, Auth::user(), $this->commentText);
         $this->commentText = '';
         $this->post->refresh();
 

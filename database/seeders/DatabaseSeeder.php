@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Attachment;
-use App\Models\Post;
 use App\Models\User;
+use App\Models\UserNotification;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -69,7 +68,7 @@ class DatabaseSeeder extends Seeder
         //     'file_size' => '77824',
         // ]);
 
-        $this->command->info("Attachment added for {$user1->name}'s post.");
+        // $this->command->info("Attachment added for {$user1->name}'s post.");
 
         // $attachment = Attachment::create([
         //     'user_id' => '2',
@@ -79,6 +78,9 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         // $this->command->info("Product Category {$attachment->file_name} created successfully");
+
+        UserNotification::factory()->count(20)->create(['user_id' => 2, 'post_id' => 1]);
+        $this->command->info("200 Notifications created");
 
     }
 }

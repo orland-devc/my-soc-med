@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Post;
+use App\Models\UserNotification;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
 
@@ -15,6 +16,9 @@ new class extends Component {
         } else {
             $this->post->likes()->create(['user_id' => $user->id]);
         }
+
+        UserNotification::sendLikeNotification($this->post, $user);
+        
         $this->post->refresh();
     }
 
@@ -203,6 +207,4 @@ new class extends Component {
             </div>
         </div>
     </div>
-
-
 </div>
