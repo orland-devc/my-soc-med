@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\UserNotification;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserNotificationFactory extends Factory
 {
@@ -15,7 +15,7 @@ class UserNotificationFactory extends Factory
             'user_id' => \App\Models\User::factory(),
             'from_user_id' => null,
             'post_id' => null,
-            'type' => $this->faker->randomElement(['post.liked','comment.reply','follow']),
+            'type' => $this->faker->randomElement(['post.liked', 'comment.reply', 'follow']),
             'title' => $this->faker->sentence(4),
             'message' => $this->faker->sentence(8),
             'is_read' => false,

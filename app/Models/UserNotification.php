@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class UserNotification extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'from_user_id',
@@ -58,12 +59,12 @@ class UserNotification extends Model
 
         // Create the notification
         self::create([
-            'user_id'      => $post->user_id,     // receiver (post owner)
+            'user_id' => $post->user_id,     // receiver (post owner)
             'from_user_id' => $fromUser->id,      // sender (liker)
-            'post_id'      => $post->id,
-            'type'         => 'like',
-            'message'      => "{$fromUser->name} liked your post.",
-            'is_read'      => false,
+            'post_id' => $post->id,
+            'type' => 'like',
+            'message' => "{$fromUser->name} liked your post.",
+            'is_read' => false,
         ]);
     }
 
@@ -81,8 +82,8 @@ class UserNotification extends Model
             ['post_id', '=', $post->id],
             ['type', '=', 'comment'],
         ])
-        ->where('created_at', '>=', now()->subMinutes(1)) // avoid flooding
-        ->first();
+            ->where('created_at', '>=', now()->subMinutes(1)) // avoid flooding
+            ->first();
 
         if ($existing) {
             return;
@@ -90,18 +91,17 @@ class UserNotification extends Model
 
         // Truncate comment text for readability (optional)
         $excerpt = strlen($commentText) > 50
-            ? substr($commentText, 0, 47) . '...'
+            ? substr($commentText, 0, 47).'...'
             : $commentText;
 
         // Create the notification
         self::create([
-            'user_id'      => $post->user_id,     // post owner (receiver)
+            'user_id' => $post->user_id,     // post owner (receiver)
             'from_user_id' => $fromUser->id,      // commenter
-            'post_id'      => $post->id,
-            'type'         => 'comment',
-            'message'      => "{$fromUser->name} commented: “{$excerpt}”",
-            'is_read'      => false,
+            'post_id' => $post->id,
+            'type' => 'comment',
+            'message' => "{$fromUser->name} commented: “{$excerpt}”",
+            'is_read' => false,
         ]);
     }
-
 }

@@ -80,7 +80,7 @@ class DatabaseSeeder extends Seeder
         // $this->command->info("Product Category {$attachment->file_name} created successfully");
 
         UserNotification::factory()->count(20)->create(['user_id' => 2, 'post_id' => 1]);
-        $this->command->info("200 Notifications created");
+        $this->command->info('200 Notifications created');
 
     }
 }
