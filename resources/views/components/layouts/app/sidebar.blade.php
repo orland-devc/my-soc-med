@@ -136,7 +136,7 @@
         </flux:mobile-navbar>
 
         <flux:mobile-navbar class="-mb-px text-2xl">
-            <flux:mobile-navbar.item icon="users" :href="route('notifications')" :current="request()->routeIs('notifications')" wire:navigate>
+            <flux:mobile-navbar.item icon="search" :href="route('notifications')" :current="request()->routeIs('notifications')" wire:navigate>
             </flux:mobile-navbar.item>
         </flux:mobile-navbar>
 

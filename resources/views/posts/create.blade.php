@@ -5,11 +5,11 @@
         <div class="px-4 py-4 md:py-8">
             <div class="max-w-2xl mx-auto">
                 <!-- Mobile Header -->
-                <div class=" flex items-center justify-between mb-6">
+                <div class="flex items-center justify-between mb-6">
                     <h1 class="text-2xl flex items-center font-bold text-zinc-900 dark:text-white">
                         {{ __('Create Post') }}
                     </h1>
-                    <img src="{{ asset(Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" class="w-10 h-10 rounded-full border-2 border-zinc-300 dark:border-zinc-600 object-cover">
+                    <livewire:auth.user-options/>
                 </div>
 
                 <form action="{{ route('posts.store')}}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-6">
@@ -30,13 +30,80 @@
                         </div>
 
                         <!-- Description Textarea -->
-                        <div class="mb-8">
+                        <div class="mb-6">
                             <flux:textarea
                                 :label="__('Description')"
                                 name="description"
                                 :placeholder="__('Tell your story... Share your thoughts, experiences, or anything on your mind. The more details, the better!')"
                                 class="resize-none h-32 md:h-40 text-base"
                             ></flux:textarea>
+                        </div>
+
+                        <!-- Privacy Options -->
+                        <div class="mb-8 hidden">
+                            <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">
+                                {{ __('Who can see this?') }}
+                            </label>
+                            
+                            <div class="grid grid-cols-1 gap-3">
+                                <!-- Public Option -->
+                                <label class="relative flex items-start p-4 border-2 rounded-xl cursor-pointer transition-all hover:border-blue-400 dark:hover:border-blue-500 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-900/20 group">
+                                    <input 
+                                        type="radio" 
+                                        name="privacy" 
+                                        value="0" 
+                                        class="mt-1 w-5 h-5 text-blue-600 border-zinc-300 dark:border-zinc-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:bg-zinc-800" 
+                                        checked
+                                    >
+                                    <div class="ml-4 flex-1">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-globe text-blue-600 dark:text-blue-400"></i>
+                                            <span class="font-semibold text-zinc-900 dark:text-white">{{ __('Public') }}</span>
+                                        </div>
+                                        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                                            {{ __('Anyone on or off the platform can see this post') }}
+                                        </p>
+                                    </div>
+                                </label>
+
+                                <!-- Friends Option -->
+                                <label class="relative flex items-start p-4 border-2 rounded-xl cursor-pointer transition-all hover:border-blue-400 dark:hover:border-blue-500 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-900/20 group">
+                                    <input 
+                                        type="radio" 
+                                        name="privacy" 
+                                        value="1" 
+                                        class="mt-1 w-5 h-5 text-blue-600 border-zinc-300 dark:border-zinc-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:bg-zinc-800"
+                                    >
+                                    <div class="ml-4 flex-1">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-user-group text-green-600 dark:text-green-400"></i>
+                                            <span class="font-semibold text-zinc-900 dark:text-white">{{ __('Friends') }}</span>
+                                        </div>
+                                        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                                            {{ __('Only your friends can see this post') }}
+                                        </p>
+                                    </div>
+                                </label>
+
+                                <!-- Only Me Option -->
+                                <label class="relative flex items-start p-4 border-2 rounded-xl cursor-pointer transition-all hover:border-blue-400 dark:hover:border-blue-500 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-900/20 group">
+                                    <input 
+                                        type="radio" 
+                                        name="privacy" 
+                                        value="2" 
+                                        class="mt-1 w-5 h-5 text-blue-600 border-zinc-300 dark:border-zinc-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:bg-zinc-800"
+                                    >
+                                    <div class="ml-4 flex-1">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-lock text-orange-600 dark:text-orange-400"></i>
+                                            <span class="font-semibold text-zinc-900 dark:text-white">{{ __('Only Me') }}</span>
+                                        </div>
+                                        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                                            {{ __('Only you can see this post') }}
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
 
                         <!-- File Upload Area -->
@@ -89,12 +156,9 @@
 
                     <!-- Submit Button -->
                     <div class="flex gap-3">
-                        {{-- <a class="flex-1 flex items-center justify-center px-6 py-3 bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-all font-semibold">
-                            {{ __('Cancel') }}
-                        </a> --}}
-                        <flux:button type="submit" variant="primary" class="flex-1">
-                            <i class="fas fa-paper-plane mr-2"></i>
+                        <flux:button type="submit" variant="primary" class="flex-1 flex items-center">
                             {{ __('Flex it!') }}
+                            <i class="fas fa-meteor text-xl mr-2"></i>
                         </flux:button>
                     </div>
 

@@ -22,7 +22,7 @@ new class extends Component {
             $notification->save();
         }
 
-        return redirect($notification->link);
+        $this->redirectIntended($notification->link, navigate: true);
     }
 };
 ?>
@@ -85,7 +85,12 @@ new class extends Component {
             <!-- Notifications List -->
             <div class="overflow-y-auto">
                 @forelse (Auth::user()->userNotifications->sortByDesc('created_at') as $notification)
-                    <div wire:click="clickNotification({{$notification->id}})" wire:navigate class="cursor-pointer px-6 py-4 hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors border-b border-gray-100 dark:border-zinc-800 last:border-b-0">
+                    <div wire:click="clickNotification({{$notification->id}})" class="cursor-pointer px-6 py-4 transition-colors border-b border-gray-100 dark:border-zinc-800 last:border-b-0 relative {{ $notification->is_read ? '' : 'bg-blue-800/10 hover:bg-blue-800/20' }}"
+>
+                        <!-- Unread indicator -->
+                        @if(!$notification->is_read)
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>
+                        @endif
                         <div class="flex items-start gap-3">
                             <!-- Icon -->
                             <div class="flex-shrink-0 mt-1">
@@ -109,12 +114,6 @@ new class extends Component {
                                 </span>
                             </div>
 
-                            <!-- Unread indicator -->
-                            @if(!$notification->is_read)
-                                <div class="flex-shrink-0">
-                                    <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                                </div>
-                            @endif
                         </div>
                     </div>
                 @empty

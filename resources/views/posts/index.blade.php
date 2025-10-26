@@ -28,7 +28,6 @@
             <img src="{{ asset('images/flexy/branding-dark.png') }}" alt="" class="h-10 hidden dark:block">
             <img src="{{ asset('images/flexy/branding.png') }}" alt="" class="h-10 dark:hidden">
             <div class="flex items-center gap-2">
-                <i class="fas fa-magnifying-glass text-lg"></i>
                 <livewire:notifications.index/>
                 <livewire:auth.user-options/>
             </div>
