@@ -130,13 +130,13 @@ class UserNotification extends Model
 
         // Create the notification
         self::create([
-            'user_id'      => $post->user_id,     // post owner (receiver)
+            'user_id' => $post->user_id,     // post owner (receiver)
             'from_user_id' => $fromUser->id,      // reposter
-            'post_id'      => $post->id,
-            'type'         => 'repost',
-            'message'      => "{$fromUser->name} reposted your post.",
-            'is_read'      => false,
-            'link'         => route('posts.show', ['id' => $post->id]),
+            'post_id' => $post->id,
+            'type' => 'repost',
+            'message' => "{$fromUser->name} reposted your post.",
+            'is_read' => false,
+            'link' => route('posts.show', ['id' => $post->id]),
         ]);
     }
 
@@ -160,13 +160,12 @@ class UserNotification extends Model
 
         // Create the notification
         self::create([
-            'user_id'      => $toUser->id,     // receiver (followed user)
+            'user_id' => $toUser->id,     // receiver (followed user)
             'from_user_id' => $fromUser->id,   // sender (follower)
-            'type'         => 'follow',
-            'message'      => "{$fromUser->name} started following you.",
-            'is_read'      => false,
-            'link'         => route('user.show', ['id' => $fromUser->id]),
+            'type' => 'follow',
+            'message' => "{$fromUser->name} started following you.",
+            'is_read' => false,
+            'link' => route('user.show', ['id' => $fromUser->id]),
         ]);
     }
-
 }
