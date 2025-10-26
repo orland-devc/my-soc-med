@@ -10,7 +10,7 @@
                 </flux:heading>
                 <livewire:posts.post-options :post="$post" />
             </div>
-            <div class="bg-white dark:bg-zinc-900 rounded-xl shadow-sm md:border border-zinc-200 dark:border-zinc-800 overflow-hidden hover:shadow-md transition-shadow">
+            <div class="bg-white dark:bg-zinc-900 rounded-xl md:shadow-sm md:border border-zinc-200 dark:border-zinc-800 overflow-hidden hover:shadow-md transition-shadow">
                 <!-- Post Header -->
                 <div class="md:px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
                     <div class="flex justify-between items-start">

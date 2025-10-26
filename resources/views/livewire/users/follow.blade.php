@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Models\UserNotification;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
 
@@ -28,6 +29,7 @@ new class extends Component {
         }
 
         // Refresh states
+        UserNotification::sendFollowNotification($auth, $this->user);
         $this->isFollowing = $auth->isFollowing($this->user);
         $this->isFollowBack = $this->user->isFollowing($auth);
     }

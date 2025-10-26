@@ -10,54 +10,122 @@ new class extends Component {
     {
         $authUser = Auth::user();
         $authUser->userNotifications()->where('is_viewed', false)->update(['is_viewed' => true]);
+    }
 
+    public function clickNotification($notificationId)
+    {
+        $authUser = Auth::user();
+        $notification = $authUser->userNotifications()->where('id', $notificationId)->first();
 
+        if ($notification && !$notification->is_read) {
+            $notification->is_read = true;
+            $notification->save();
+        }
+
+        return redirect($notification->link);
     }
 };
 ?>
 
-
-<div wire:poll.3s
-    x-data="{ notifications : false }"
->
+<div wire:poll.3s x-data="{ notifications: false }">
+    <!-- Notification Bell Button -->
     <button
-        @click="notifications=true"
+        @click="notifications = true"
         wire:click="viewNotification"
+        class="relative p-2 rounded-full flex items-center hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors duration-200"
     >
-        <i class="fas fa-bell text-lg"></i> 
-        <span class="badge">
-            {{ Auth::user()->userNotifications()->where('is_viewed', false)->count() }}
-        </span>
+        <i class="fas fa-bell text-xl text-gray-900 dark:text-gray-300"></i>
+        
+        @if(Auth::user()->userNotifications()->where('is_viewed', false)->count() > 0)
+            <span class="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                {{ Auth::user()->userNotifications()->where('is_viewed', false)->count() }}
+            </span>
+        @endif
     </button>
 
+    <!-- Backdrop -->
     <div 
         x-show="notifications"
-        @click="open = false"
-        x-transition.opacity
-        class="fixed inset-0 z-40 bg-transparent cursor-default"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        @click="notifications = false"
+        class="fixed inset-0 z-40 bg-black/20 dark:bg-black/40 backdrop-blur-sm"
+        style="display: none;"
     ></div>
 
+    <!-- Notification Panel -->
     <div
-    x-show="notifications"
-    @click.away="notifications=false"
-    class="fixed inset-0 top-12 bottom-15 flex justify-center p-4 white dark:bg-zinc-800 z-40 overflow-auto">
-        <div class="flex flex-col w-full">
-            <h3 class="text-2xl font-semibold">Notifications</h3>
-            <div class="flex flex-col space-y-4 py-4">
+        x-show="notifications"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 translate-y-4"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 translate-y-4"
+        @click.away="notifications = false"
+        class="fixed left-4 right-4 bottom-16 top-16 z-50"
+        style="display: none;"
+    >
+        <div class="rounded-2xl bg-white dark:bg-zinc-900 shadow-2xl ring-1 ring-black/5 dark:ring-white/10 h-full overflow-hidden">
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Notifications</h3>
+                <button 
+                    @click="notifications = false"
+                    class="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+                >
+                    <i class="fas fa-times text-gray-500 dark:text-gray-400"></i>
+                </button>
+            </div>
+
+            <!-- Notifications List -->
+            <div class="overflow-y-auto">
                 @forelse (Auth::user()->userNotifications->sortByDesc('created_at') as $notification)
-                    <div class="p-4 rounded-lg bg-gray-100 dark:bg-zinc-700/50">
-                        <h4 class="font-bold">{{ $notification->title }}</h4>
-                        <p>{{ $notification->message }}</p>
-                        <span class="text-sm text-gray-500">{{ $notification->created_at->diffForHumans() }}</span>
+                    <div wire:click="clickNotification({{$notification->id}})" wire:navigate class="cursor-pointer px-6 py-4 hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors border-b border-gray-100 dark:border-zinc-800 last:border-b-0">
+                        <div class="flex items-start gap-3">
+                            <!-- Icon -->
+                            <div class="flex-shrink-0 mt-1">
+                                    <img 
+                                        src="{{ $notification->fromUser->profile_photo_path }}" 
+                                        alt="{{ $notification->fromUser->name }}" 
+                                        class="w-10 h-10 rounded-full object-cover"
+                                    >
+                            </div>
+                            
+                            <!-- Content -->
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold text-gray-900 dark:text-white text-sm mb-1">
+                                    {{ $notification->title }}
+                                </h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                                    {{ $notification->message }}
+                                </p>
+                                <span class="text-xs text-gray-500 dark:text-gray-500 mt-2 inline-block">
+                                    {{ $notification->created_at->diffForHumans() }}
+                                </span>
+                            </div>
+
+                            <!-- Unread indicator -->
+                            @if(!$notification->is_read)
+                                <div class="flex-shrink-0">
+                                    <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 @empty
-                    <div class="m-auto">
-                        <span>No notifications to show</span>
+                    <div class="px-6 py-12 text-center">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center">
+                            <i class="fas fa-bell-slash text-2xl text-gray-400 dark:text-gray-600"></i>
+                        </div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">No notifications to show</p>
                     </div>
                 @endforelse
             </div>
         </div>
-
     </div>
 </div>
-

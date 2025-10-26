@@ -45,13 +45,25 @@ class DatabaseSeeder extends Seeder
         $this->command->info("Account {$user1->email} created successfully.");
 
         $user2 = User::create([
-            'name' => 'Daniel John Padilla',
-            'email' => 'daniel@gmail.com',
+            'name' => 'Jimwell Mendoza',
+            'email' => 'jim@gmail.com',
             'password' => bcrypt('orlandsayson30'),
-            'profile_photo_path' => 'images/uploads/unnamed.jpg',
+            'profile_photo_path' => 'images/uploads/jim.jpg',
+            'cover_path' => 'images/cover/jimcover.jpg',
         ]);
 
         $this->command->info("Account {$user2->email} created successfully.");
+
+        $user3 = User::create([
+            'name' => 'John Paul Sales',
+            'email' => 'paul@gmail.com',
+            'password' => bcrypt('orlandsayson30'),
+            'profile_photo_path' => 'images/uploads/paul.jpg',
+            'cover_path' => 'images/cover/paulcover.png',
+        ]);
+
+        $this->command->info("Account {$user3->email} created successfully.");
+
 
         // $post = Post::create([
         //     'user_id' => 2,
@@ -79,8 +91,8 @@ class DatabaseSeeder extends Seeder
 
         // $this->command->info("Product Category {$attachment->file_name} created successfully");
 
-        UserNotification::factory()->count(20)->create(['user_id' => 2, 'post_id' => 1]);
-        $this->command->info('200 Notifications created');
+        // UserNotification::factory()->count(20)->create(['user_id' => 2, 'post_id' => 1]);
+        // $this->command->info('200 Notifications created');
 
     }
 }

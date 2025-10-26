@@ -15,7 +15,7 @@ new class extends Component {
             @click="userOptions=true"
             class="cursor-pointer flex items-center justify-center p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 active:bg-zinc-300 dark:active:bg-zinc-700 rounded-full transition-all duration-200"
         >
-            <i class="fa-solid fa-bars text-2xl text-zinc-700 dark:text-zinc-300"></i>
+            <i class="fa-solid fa-bars text-xl text-zinc-900 dark:text-zinc-300"></i>
         </button>
     </div>
 
@@ -86,7 +86,12 @@ new class extends Component {
                 <a href="" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all group">
                     <i class="fa-solid fa-bell text-base w-5 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors"></i>
                     <span class="font-medium text-sm">{{ __('Notifications') }}</span>
-                    <span class="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-0.5">3</span>
+                    @if (Auth::user()->userNotifications()->where('is_viewed', false)->count() > 0)
+                        <span class="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white px-1.5">
+                            {{ Auth::user()->userNotifications()->where('is_viewed', false)->count() }}
+                        </span>
+                        
+                    @endif
                 </a>
 
                 <a href="" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all group">

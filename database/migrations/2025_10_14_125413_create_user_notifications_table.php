@@ -25,6 +25,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('priority')->default(0);
             $table->boolean('is_read')->default(false);
             $table->boolean('is_viewed')->default(false);
+            $table->string('link')->nullable();
             $table->timestamps();
 
             $table->index(['user_id', 'is_read']);

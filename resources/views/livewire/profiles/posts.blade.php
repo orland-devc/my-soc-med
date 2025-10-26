@@ -10,7 +10,7 @@ new class extends Component {
 
 ?>
 
-<div class="flex flex-col bg-white dark:bg-zinc-900 md:rounded-xl md:shadow-sm  md:border md:border-zinc-200 md:dark:border-zinc-800 overflow-hidden md:hover:shadow-md transition-shadow">
+<div class="flex flex-col bg-white dark:bg-zinc-900 md:rounded-xl md:shadow-sm  md:border md:border-zinc-200 md:dark:border-zinc-800 md:hover:shadow-md transition-shadow">
     <!-- Post Header -->
     <div class="md:px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
         <div class="flex justify-between items-start">
@@ -118,5 +118,5 @@ new class extends Component {
         <livewire:posts.comment-box :post="$post"/>
     </div>
 
-    <div class="md:hidden border border-zinc-300 dark:border-zinc-600"></div>
+    <div class="md:hidden -mx-4 border border-zinc-300 dark:border-zinc-600"></div>
 </div>

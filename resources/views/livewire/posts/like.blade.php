@@ -37,6 +37,8 @@ new class extends Component {
             'post_id' => $this->post->id,
             'caption' => $this->captionText,
         ]);
+        
+        UserNotification::sendRepostNotification($this->post, $user);
 
         $this->captionText = '';
         $this->post->refresh();

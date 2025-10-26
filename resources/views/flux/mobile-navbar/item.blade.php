@@ -19,7 +19,7 @@ $iconVariant = $iconVariant ??= $attributes->pluck('icon:variant');
 ])
 
 @php
-$iconClasses = Flux::classes('size-6');
+$iconClasses = Flux::classes('size-5');
 
 $classes = Flux::classes()
     ->add('px-3 flex items-center justify-center relative')
@@ -49,7 +49,7 @@ $classes = Flux::classes()
             <img 
                 src="{{ asset($image) }}" 
                 alt="Profile" 
-                class="w-7 h-7 rounded-full border-2 border-zinc-300 dark:border-zinc-600 object-cover
+                class="w-6 h-6 rounded-full border-2 border-zinc-300 dark:border-zinc-600 object-cover
                        data-current:after:border-black dark:data-current:after:border-white"
             />
         </div>
